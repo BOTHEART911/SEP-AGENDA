@@ -4,7 +4,7 @@
  * Software propietario; cualquier modificación por terceros anula la garantía.
  * FASE ACTUAL: Fase 4 — SEP-AGENDA (Portal del Estudiante)
  * ------------------------------------------------------------
- * Login (documento + clave dinámica), datos propios del estudiante,
+ * Login (clave dinámica), datos propios del estudiante,
  * selección de cupo con la RUEDA iOS (solo horarios libres),
  * agendar / reagendar / cancelar. Mismo /exec que SEP GROUP.
  * ============================================================ */
@@ -51,7 +51,7 @@ const SESSION_KEY = 'sepAgendaSesion';
 function guardarSesion_(cred){ try{ localStorage.setItem(SESSION_KEY, JSON.stringify(cred)); }catch(_){} }
 function leerSesion_(){ try{ const s = localStorage.getItem(SESSION_KEY); return s ? JSON.parse(s) : null; }catch(_){ return null; } }
 function borrarSesion_(){ try{ localStorage.removeItem(SESSION_KEY); }catch(_){} }
-function cred_(){ const s = leerSesion_() || {}; return { clave: s.clave || '', documento: s.documento || '' }; }
+function cred_(){ const s = leerSesion_() || {}; return { clave: s.clave || '' }; }
 
 /* ================== VISTAS ================== */
 function showView(id){
@@ -68,20 +68,19 @@ function error_(msg){ Swal.fire({ icon:'error', title:'Ups', text:String(msg||'O
 /* ============================================================
  * LOGIN
  * ============================================================ */
-async function hacerLogin_(clave, documento, silencioso){
-  const data = await apiPost('loginEstudiante', { clave, documento });
+async function hacerLogin_(clave, silencioso){
+  const data = await apiPost('loginEstudiante', { clave });
   EST = data;
-  guardarSesion_({ clave: clave, documento: documento });
+  guardarSesion_({ clave: clave });
   renderHome_();
   showView('home');
   if (!silencioso) toast_('success', '¡Bienvenido(a)!');
 }
 
 $('#btn-login')?.addEventListener('click', async ()=>{
-  const documento = $('#in-doc').value.replace(/\D/g, '').trim();
   const clave = $('#in-clave').value.trim().toLowerCase();
   if (!clave) return Swal.fire({ icon:'warning', title:'Falta tu clave', text:'Ingresa la clave de acceso que recibiste.' });
-  try { await hacerLogin_(clave, documento, false); }
+  try { await hacerLogin_(clave, false); }
   catch (e){ error_(e.message || e); }
 });
 $('#in-clave')?.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') $('#btn-login').click(); });
@@ -89,7 +88,7 @@ $('#in-clave')?.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') $('#bt
 $('#btn-logout')?.addEventListener('click', ()=>{
   Swal.fire({ icon:'question', title:'¿Cerrar sesión?', showCancelButton:true,
     confirmButtonText:'Sí, salir', cancelButtonText:'Cancelar' }).then(r=>{
-    if (r.isConfirmed){ borrarSesion_(); EST = null; $('#in-clave').value=''; $('#in-doc').value=''; showView('login'); }
+    if (r.isConfirmed){ borrarSesion_(); EST = null; $('#in-clave').value=''; showView('login'); }
   });
 });
 
@@ -356,7 +355,7 @@ async function initApp_(){
 
   const ses = leerSesion_();
   if (ses && ses.clave){
-    try { await hacerLogin_(ses.clave, ses.documento || '', true); return; }
+    try { await hacerLogin_(ses.clave, true); return; }
     catch (_){ borrarSesion_(); }
   }
   showView('login');
