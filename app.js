@@ -113,7 +113,7 @@ function renderHome_(){
       <h2><span class="em">🎓</span> Tu programa</h2>
       <div class="kv"><div class="k">Programa</div><div class="v big">${escapeHtml_(e.programa || '—')}</div></div>
       ${e.promo ? `<div class="kv"><div class="k">Promoción</div><div class="v">${escapeHtml_(e.promo)}</div></div>` : ''}
-      <div class="kv"><div class="k">Tu asesor</div><div class="v">${escapeHtml_(e.asesor || 'Por asignar')}</div></div>
+      <div class="kv"><div class="k">Tu asesor(a) comercial</div><div class="v">${escapeHtml_(e.asesor || 'Por asignar')}</div></div>
       <div class="kv"><div class="k">Tu clave</div><div class="v" style="letter-spacing:1px">${escapeHtml_(e.claveAcceso || '—')}</div></div>
     </div>`;
 
