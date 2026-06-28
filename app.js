@@ -7,7 +7,7 @@
  * Login (clave dinámica), datos propios del estudiante,
  * selección de cupo con la RUEDA iOS (solo horarios libres),
  * agendar / reagendar / cancelar. Mismo /exec que SEP GROUP.
- * ============================================================ */
+ * ============================================================ */ 
 
 /* ================== CONFIGURACIÓN ================== */
 const API_BASE = 'https://script.google.com/macros/s/AKfycbyrb7dXsicBPJwEkkMJJfojtkPhfKeBxiFKqMHac348M94apbwLsRaz0bhpL0sX8HoTSQ/exec';
