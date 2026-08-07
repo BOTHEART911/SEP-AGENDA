@@ -1,0 +1,30 @@
+/* ============================================================================
+ * CAPA 0 · AVISOS POR ENCIMA DE TODO  (SEP AGENDA)
+ * ----------------------------------------------------------------------------
+ * QUÉ ARREGLA
+ *   Mismo problema que en SEP GROUP: SweetAlert2 v11 pone su contenedor en
+ *   z-index 1060 por defecto, y aquí la pila de styles.css es más alta
+ *   (.iosp-overlay 9500 · .loader 12000). Cualquier aviso lanzado con la rueda
+ *   de cupos abierta se disparaba bien, pero quedaba debajo y no se veía.
+ *
+ * QUÉ HACE
+ *   Sube el contenedor de SweetAlert por encima de TODA la pila (13000), así
+ *   que el aviso se ve siempre, haya o no rueda de cupos o girador delante.
+ *
+ * INSTALACIÓN (una línea en el <head>, DESPUÉS de styles.css)
+ *   <link rel="stylesheet" href="css/capa-0-avisos.css" />
+ *
+ * PAREJA
+ *   Ninguna. Archivo autónomo, sin JS.
+ *
+ * NOTAS
+ *   · No toca index.html, app.js ni styles.css. Se quita borrando la línea.
+ *   · Si algún día se añade una capa nueva con z-index propio, debe quedar por
+ *     debajo de 13000 o el aviso volverá a taparse.
+ * ========================================================================== */
+
+.swal2-container { z-index: 13000 !important; }
+
+/* El backdrop del propio SweetAlert va justo debajo de su ventana, nunca
+   por debajo de la rueda que hay detrás (si no, se vería el escalón). */
+.swal2-container.swal2-backdrop-show { background: rgba(15, 23, 42, .38); }

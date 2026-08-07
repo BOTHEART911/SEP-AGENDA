@@ -1,0 +1,77 @@
+/* ============================================================================
+ * CAPA 1 · MICRO-EFECTOS BASE  (SEP AGENDA)
+ * ----------------------------------------------------------------------------
+ * QUÉ HACE
+ *   Presión con resorte al tocar botones y elementos de la rueda de cupos;
+ *   "pop" con resorte al abrir la rueda; entrada escalonada de las tarjetas
+ *   del inicio.
+ *
+ * INSTALACIÓN (una línea en el <head>, DESPUÉS de styles.css)
+ *   <link rel="stylesheet" href="css/capa-1-micro.css" />
+ *
+ * PAREJA
+ *   Ninguna. Archivo autónomo, sin JS.
+ *
+ * CLASES REALES DE ESTA APP QUE TOCA
+ *   .btn .iosp-btn .iosp-item .tb-logout .card .btn-meet
+ *
+ * NOTAS
+ *   · No toca index.html, app.js ni styles.css. Se quita borrando la línea.
+ *   · Todo se apaga con "reducir movimiento" del sistema.
+ * ========================================================================== */
+
+/* ---- 1. Presión con resorte -------------------------------------------- */
+.btn,
+.iosp-btn,
+.iosp-item,
+.tb-logout,
+.btn-meet {
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .22s cubic-bezier(.2, .9, .25, 1.5),
+              background .18s ease,
+              box-shadow .22s ease,
+              color .18s ease;
+}
+
+.btn:active       { transform: scale(.955); }
+.iosp-btn:active  { transform: scale(.94); }
+.iosp-item:active { transform: scale(.97); }
+.tb-logout:active { transform: scale(.9); }
+.btn-meet:active  { transform: scale(.96); }
+
+.btn:disabled:active { transform: none; }
+
+/* ---- 2. "Pop" al abrir la rueda de cupos -------------------------------- */
+.iosp-overlay:not(.hidden) .iosp-card {
+  animation: sep1-rueda-in .4s cubic-bezier(.16, 1.02, .28, 1.02) both;
+}
+@keyframes sep1-rueda-in {
+  0%   { opacity: 0; transform: translateY(26px) scale(.97); }
+  72%  { opacity: 1; transform: translateY(-4px) scale(1.004); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* ---- 3. Entrada escalonada de las tarjetas del inicio ------------------- */
+#home-content .card {
+  animation: sep1-item-in .38s cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes sep1-item-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+#home-content .card:nth-of-type(1) { animation-delay: 0ms; }
+#home-content .card:nth-of-type(2) { animation-delay: 60ms; }
+#home-content .card:nth-of-type(3) { animation-delay: 115ms; }
+#home-content .card:nth-of-type(4) { animation-delay: 160ms; }
+#home-content .card:nth-of-type(n + 5) { animation-delay: 195ms; }
+
+/* ---- 4. Respeto a "reducir movimiento" --------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .iosp-btn, .iosp-item, .tb-logout, .btn-meet {
+    transition: background .15s ease, color .15s ease;
+  }
+  .btn:active, .iosp-btn:active, .iosp-item:active,
+  .tb-logout:active, .btn-meet:active { transform: none; }
+  .iosp-overlay:not(.hidden) .iosp-card { animation: none; }
+  #home-content .card { animation: none; }
+}
