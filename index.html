@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SEP-AGENDA — Portal del Estudiante (PWA)
+  © Oscar Polanía — Experto en Soluciones Digitales · +57 310 323 0712
+  Software propietario; cualquier modificación por terceros anula la garantía.
+  FASE ACTUAL: Fase 4 — SEP-AGENDA (Portal del Estudiante)
+  ============================================================
+-->
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <title>SEP-AGENDA · Portal del Estudiante</title>
+  <link rel="icon" href="https://botheart911.github.io/SEP-GROUP/img/sep_logo.png">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader" class="loader hidden">
+    <div class="spinner">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+
+  <!-- ============================ LOGIN ============================ -->
+  <section id="view-login" class="view active">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-badge"><span>Portal del estudiante</span></div>
+        <img class="login-logo" id="login-logo"
+             src="https://botheart911.github.io/SEP-GROUP/img/sep_logo.png"
+             alt="SEP Colombia">
+        <h1>SEP&nbsp;AGENDA</h1>
+        <p class="sub">Agenda y gestiona tu asesoría educativa</p>
+
+        <div class="field">
+          <label for="in-clave">Clave de acceso</label>
+          <div class="input-shell">
+            <span class="ic">🔑</span>
+            <input id="in-clave" class="clave" type="text" autocomplete="off"
+                   placeholder="ej. camila0601">
+          </div>
+        </div>
+
+        <button id="btn-login" class="btn btn-accent btn-block" style="margin-top:6px;">
+          Ingresar
+        </button>
+
+        <p class="hint">
+          🔒 Tu <b>clave de acceso</b> te fue enviada por correo y WhatsApp cuando tu perfil
+          fue aprobado. Si aún no la tienes, comunícate con tu asesor(a) comercial.
+        </p>
+
+        <div class="login-foot">
+          <b>SEP Colombia Group SAS</b><br>
+          <span class="app-version-line">Versión —</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ HOME ============================ -->
+  <section id="view-home" class="view">
+    <div class="topbar">
+      <img id="home-logo" src="https://botheart911.github.io/SEP-GROUP/img/sep_logo.png" alt="SEP">
+      <div>
+        <div class="tb-title">SEP AGENDA</div>
+        <div class="tb-sub">Portal del estudiante</div>
+      </div>
+      <div class="spacer"></div>
+      <button id="btn-logout" class="tb-logout">Salir</button>
+    </div>
+
+    <div class="container" id="home-content">
+      <!-- render dinámico -->
+    </div>
+  </section>
+
+  <!-- ============== RUEDA iOS — SOLO CUPOS DISPONIBLES ============== -->
+  <div id="ios-picker" class="iosp-overlay hidden">
+    <div class="iosp-card">
+      <div class="iosp-head">
+        <button type="button" id="iosp-cancel" class="iosp-btn">Cancelar</button>
+        <span class="iosp-title">Elige tu horario</span>
+        <button type="button" id="iosp-ok" class="iosp-btn ok">Listo</button>
+      </div>
+      <div id="iosp-body">
+        <div class="iosp-wheels">
+          <div class="iosp-highlight"></div>
+          <div class="iosp-col col-dia" id="iosp-dia"></div>
+          <div class="iosp-col" id="iosp-hora"></div>
+        </div>
+      </div>
+      <div id="iosp-empty" class="iosp-none hidden">
+        <span class="em">📭</span>
+        Por ahora no hay horarios disponibles.<br>Vuelve a intentarlo más tarde.
+      </div>
+    </div>
+  </div>
+
+  <script src="version.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
