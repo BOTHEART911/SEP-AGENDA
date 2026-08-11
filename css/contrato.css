@@ -1,0 +1,77 @@
+/* ============================================================
+ * ZONA DE ESTUDIANTES — CONTRATO (Fase 3 · 11/08/2026)
+ * © Oscar Polanía — Experto en Soluciones Digitales
+ * Va SIEMPRE después de styles.css.
+ * ============================================================ */
+
+/* Barra de avance de la lectura */
+.ctr-progress { position:sticky; top:0; z-index:5; height:4px; background:var(--bg-soft); }
+.ctr-progress i { display:block; height:100%; width:0; background:var(--accent);
+  border-radius:0 var(--r-pill) var(--r-pill) 0; transition:width .28s cubic-bezier(.32,1,.56,1); }
+
+/* Lectura */
+.ctr-lect { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-lg);
+  padding:18px 16px; box-shadow:var(--sh-sm); }
+.ctr-titulo { font-family:var(--font-display); font-weight:700; font-size:1.02rem; color:var(--primary);
+  padding-bottom:10px; margin-bottom:12px; border-bottom:1px dashed var(--border); }
+.ctr-h { font-family:var(--font-display); font-weight:700; font-size:.95rem; color:var(--primary);
+  margin:18px 0 8px; line-height:1.35; }
+.ctr-h:first-child { margin-top:0; }
+.ctr-p { font-size:.95rem; line-height:1.62; color:var(--text-soft); margin:0 0 10px; text-align:justify; }
+
+.ctr-tabla-wrap { overflow-x:auto; margin:10px 0 14px; -webkit-overflow-scrolling:touch; }
+.ctr-tabla { border-collapse:collapse; width:100%; min-width:420px; font-size:.85rem; }
+.ctr-tabla th, .ctr-tabla td { border:1px solid var(--border); padding:7px 9px; text-align:left; vertical-align:top; }
+.ctr-tabla th { background:var(--primary-soft); color:var(--primary); font-weight:700; }
+
+/* Aceptación */
+.ctr-acepto { display:flex; gap:10px; align-items:flex-start; margin:14px 0 0; padding:14px;
+  background:var(--accent-soft); border:1.5px solid rgba(214,218,9,.5); border-radius:var(--r-md);
+  font-size:.92rem; font-weight:600; color:var(--text-main); line-height:1.45; cursor:pointer; }
+.ctr-acepto input { width:20px; height:20px; accent-color:var(--primary); flex-shrink:0; margin-top:1px; }
+.ctr-acepto.ctr-falta { animation:ctrShake .5s; border-color:var(--error); background:rgba(220,38,38,.08); }
+@keyframes ctrShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+/* Navegación */
+.ctr-nav { display:flex; gap:10px; margin:16px 0 0; }
+.ctr-nav .btn { flex:1; }
+
+/* Formulario */
+.ctr-f { margin:0 0 12px; }
+.ctr-f label { display:block; font-size:.8rem; font-weight:600; color:var(--text-muted); margin:0 0 6px; }
+.ctr-f input[type=text], .ctr-f input[type=tel], .ctr-f input[type=date] {
+  width:100%; padding:12px 14px; font-family:inherit; font-size:1rem; color:var(--text-main);
+  background:#fff; border:1.5px solid var(--border-strong); border-radius:var(--r-md); }
+.ctr-f input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+.ctr-f input[disabled] { background:var(--bg-soft); color:var(--text-soft); }
+.ctr-max { font-weight:500; color:var(--text-muted); }
+
+.ctr-file { display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+  padding:13px 14px; font-size:.94rem; font-weight:600; color:var(--primary);
+  background:var(--primary-soft); border:1.5px dashed var(--border-strong);
+  border-radius:var(--r-md); cursor:pointer; text-align:center; }
+.ctr-file:active { transform:scale(.99); }
+
+/* Firmas */
+.ctr-firma { margin:14px 0 0; }
+.ctr-firma-h { display:flex; align-items:center; justify-content:space-between; margin:0 0 6px;
+  font-size:.85rem; font-weight:700; color:var(--text-soft); }
+.ctr-borrar { background:transparent; color:var(--error); font-size:.82rem; font-weight:700;
+  padding:4px 8px; border-radius:var(--r-sm); }
+.ctr-borrar:active { background:rgba(220,38,38,.08); }
+.ctr-canvas { display:block; width:100%; height:150px; background:#fff; touch-action:none;
+  border:1.5px solid var(--border-strong); border-radius:var(--r-md); }
+.ctr-firma-linea { text-align:center; font-size:.76rem; color:var(--text-muted); margin-top:4px; }
+
+/* Tarjeta del inicio */
+.ctr-call, .ctr-ok { display:flex; gap:12px; align-items:center; padding:6px 0 12px; }
+.ctr-call-ic, .ctr-ok-ic { font-size:1.7rem; }
+.ctr-call p, .ctr-ok p { margin:0; font-size:.94rem; line-height:1.5; color:var(--text-soft); }
+.ctr-video { display:block; text-align:center; margin-top:10px; font-size:.88rem; font-weight:700;
+  color:var(--primary); text-decoration:none; padding:8px; border-radius:var(--r-md);
+  background:var(--primary-soft); }
+.ctr-listo { text-align:center; }
+.ctr-listo .ctr-ok-ic { font-size:2.6rem; }
+
+/* Barra superior de la vista */
+#view-contrato .topbar .tb-title { font-family:var(--font-display); }
