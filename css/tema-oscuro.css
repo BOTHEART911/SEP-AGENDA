@@ -1,0 +1,271 @@
+/* ============================================================
+ * SEP COLOMBIA — ZONA DE ESTUDIANTES · MODO OSCURO (11/08/2026)
+ * SEP Colombia Group SAS
+ * ------------------------------------------------------------
+ * © Oscar Polanía — Experto en Soluciones Digitales
+ * Contacto: +57 310 323 0712
+ * ------------------------------------------------------------
+ * Software propietario. Cualquier modificación de este archivo
+ * por terceros anula automáticamente la garantía de
+ * funcionamiento.
+ * ------------------------------------------------------------
+ * CÓMO ESTÁ HECHO (misma receta que SEP GROUP)
+ *   styles.css ya declara su paleta como variables en :root, así
+ *   que el tema NO reescribe reglas: redefine las variables bajo
+ *   html[data-tema="oscuro"]. Debajo van, uno por uno, los
+ *   repasos de lo que NO usa variables: los blancos escritos a
+ *   mano (tarjeta del login, barra superior, campos, rueda de
+ *   cupos, punto de la trazabilidad), los degradados de la
+ *   bienvenida y SweetAlert2, que viene de CDN.
+ *
+ *   LECCIÓN DE SEP GROUP (11/08): allá app.js escribía el color
+ *   de marca EN LÍNEA sobre <html> y le ganaba al tema. AQUÍ NO
+ *   PASA: se revisó app.js y no hay ningún setProperty sobre
+ *   documentElement, así que no hace falta !important en los
+ *   tokens. Lo que sí hay son DOS colores en línea dentro del
+ *   aviso de confirmación de la asesoría (app.js, el Swal de
+ *   agendar): esos sí se repasan con !important más abajo.
+ *
+ *   REGLA para lo que se construya de aquí en adelante: usa las
+ *   variables (--bg-card, --text-main, --border…) y el tema sale
+ *   solo. Un color escrito a mano hay que repasarlo aquí.
+ *
+ *   Esta hoja va SIEMPRE después de styles.css y de las capas.
+ * ============================================================ */
+
+/* ── Botón del tema (arriba a la derecha, en todas las vistas) ── */
+.tema-btn {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: 14px;
+  z-index: 8800;                 /* por debajo de la rueda (9500) y del loader */
+  width: 42px !important;
+  height: 42px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 19px; line-height: 1;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1.5px solid var(--border-strong);
+  box-shadow: var(--sh-md);
+  cursor: pointer;
+  transition: transform .14s ease, background .18s ease, border-color .18s ease;
+}
+.tema-btn:hover  { transform: scale(1.06); }
+.tema-btn:active { transform: scale(.94); }
+.tema-btn.oculto { display: none !important; }
+
+@media (max-width: 560px) {
+  .tema-btn { width: 38px !important; height: 38px; font-size: 17px;
+              top: calc(8px + env(safe-area-inset-top, 0px)); right: 10px; }
+}
+
+/* La barra superior tiene el botón "Salir" pegado a la derecha y el botón
+   del tema es fijo: se le reserva su hueco en los DOS temas para que no se
+   monten (inicio y contrato). */
+.topbar { padding-right: 66px; }
+@media (max-width: 560px) { .topbar { padding-right: 56px; } }
+
+/* ============================================================
+   TOKENS DEL TEMA
+   ============================================================ */
+:root {
+  --on-primary: #ffffff;         /* texto que va ENCIMA de --primary */
+  --hero-1: #263143;
+  --hero-2: #1b2430;
+  --hero-3: #131a24;
+  --titulo: var(--primary);      /* color de títulos y nombres */
+}
+
+html[data-tema="oscuro"] {
+  /* Marca: el azul institucional se aclara para poder leerlo como TEXTO.
+     Donde hace de FONDO, la tinta pasa a oscura con --on-primary. */
+  --primary:        #9fb6d8;
+  --primary-2:      #8aa4ca;
+  --primary-3:      #7c96bd;
+  --primary-light:  #b8c9e4;
+  --primary-soft:   rgba(159, 182, 216, 0.15);
+  --on-primary:     #101822;
+  --hero-1:         #1f2a3a;
+  --hero-2:         #131b26;
+  --hero-3:         #0d141d;
+
+  /* Títulos: el azul aclarado da ~7,6:1 sobre la tarjeta, pero el CUERPO
+     de texto (--text-soft) da ~8,8:1 — el título pesaría MENOS que su
+     propio párrafo. Por eso los encabezados suben a ~12:1. */
+  --titulo:         #dbe6f7;
+
+  --accent:         #d6da09;
+  --accent-2:       #b9bd08;
+  --accent-light:   #eef07a;
+  --accent-soft:    rgba(214, 218, 9, 0.18);
+
+  /* Semánticos */
+  --ok:    #34d399;
+  --error: #f87171;
+  --warn:  #fbbf24;
+  --info:  #60a5fa;
+  --meet:  #24a35d;
+
+  /* Neutros */
+  --bg-base:   #0e141c;
+  --bg-soft:   #161f2a;
+  --bg-card:   #1a2431;
+  --text-main: #e9eef5;
+  --text-soft: #b7c3d2;
+  --text-muted:#8a99ab;
+
+  --border:        rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.24);
+  --scrim:         rgba(4, 8, 13, 0.72);
+
+  --sh-sm: 0 1px 3px rgba(0, 0, 0, 0.45);
+  --sh-md: 0 4px 16px rgba(0, 0, 0, 0.50);
+  --sh-lg: 0 12px 32px rgba(0, 0, 0, 0.58);
+  --sh-xl: 0 24px 48px rgba(0, 0, 0, 0.65);
+
+  color-scheme: dark;            /* scroll, selects y el calendario nativo del SO */
+}
+
+/* El fondo de styles.css lleva un degradado azul escrito a mano que en
+   oscuro se ve como una mancha: se rehace con el propio fondo del tema. */
+html[data-tema="oscuro"] body {
+  background:
+    radial-gradient(circle at 0% 0%, var(--accent-soft), transparent 42%),
+    radial-gradient(circle at 100% 100%, rgba(159, 182, 216, .10), transparent 46%),
+    var(--bg-base);
+  color: var(--text-main);
+}
+
+/* ============================================================
+   TÍTULOS Y NOMBRES — por encima del cuerpo de texto
+   ============================================================ */
+html[data-tema="oscuro"] .login-card h1,
+html[data-tema="oscuro"] .topbar .tb-title,
+html[data-tema="oscuro"] .card h2,
+html[data-tema="oscuro"] .slot-box .sb-date,
+html[data-tema="oscuro"] .traza-list li:first-child,
+html[data-tema="oscuro"] .iosp-title,
+html[data-tema="oscuro"] .iosp-item.sel,
+html[data-tema="oscuro"] .ctr-titulo,
+html[data-tema="oscuro"] .ctr-h,
+html[data-tema="oscuro"] .ctr-tabla th,
+html[data-tema="oscuro"] .ctr-visor-head h3 {
+  color: var(--titulo);
+}
+/* Lo que ya va en --text-main (valores de las fichas, resumen) queda como
+   está: #e9eef5 pesa más todavía que el color de título. */
+
+/* ============================================================
+   REPASOS — lo que NO usa variables
+   ============================================================ */
+
+/* ── 1. Fondos de marca (donde --primary o --accent son FONDO) ── */
+html[data-tema="oscuro"] .btn-primary { color: var(--on-primary); }
+html[data-tema="oscuro"] .btn-accent,
+html[data-tema="oscuro"] .login-badge span,
+html[data-tema="oscuro"] .iosp-btn.ok { color: #101822; }
+html[data-tema="oscuro"] .btn-danger {
+  background: rgba(248, 113, 113, .10); border-color: rgba(248, 113, 113, .45);
+}
+html[data-tema="oscuro"] .btn-danger:hover { background: rgba(248, 113, 113, .18); }
+
+/* ── 2. Bienvenida (degradado de marca) ────────────────────── */
+html[data-tema="oscuro"] .welcome {
+  background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3));
+  color: #f2f6fb;
+  border: 1px solid var(--border);
+}
+html[data-tema="oscuro"] .welcome .hello { color: #cfd6e0; }
+
+/* ── 3. Tarjeta del login y barra superior (blancos a mano) ── */
+html[data-tema="oscuro"] .login-card {
+  background: rgba(26, 36, 49, .82);
+  border-color: rgba(255, 255, 255, .10);
+}
+html[data-tema="oscuro"] .topbar {
+  background: rgba(14, 20, 28, .86);
+  border-bottom-color: var(--border);
+}
+html[data-tema="oscuro"] .card.glass { background: rgba(26, 36, 49, .72); }
+
+/* ── 4. Campos de texto ────────────────────────────────────── */
+html[data-tema="oscuro"] .field .input-shell,
+html[data-tema="oscuro"] .ctr-f input[type=text],
+html[data-tema="oscuro"] .ctr-f input[type=tel],
+html[data-tema="oscuro"] .ctr-f input[type=date] {
+  background: var(--bg-soft);
+  border-color: var(--border-strong);
+  color: var(--text-main);
+}
+html[data-tema="oscuro"] .ctr-f input[disabled] { background: #101822; color: var(--text-soft); }
+html[data-tema="oscuro"] .field .input-shell:focus-within { box-shadow: 0 0 0 4px rgba(159, 182, 216, .18); }
+
+/* ── 5. Asesoría agendada (caja morada) ────────────────────── */
+html[data-tema="oscuro"] .slot-box {
+  background: linear-gradient(135deg, rgba(167, 139, 250, .16), rgba(124, 58, 237, .08));
+  border-color: rgba(167, 139, 250, .34);
+}
+html[data-tema="oscuro"] .slot-box .sb-label { color: #c4b5fd; }
+html[data-tema="oscuro"] .btn-meet { color: #06180e; }
+
+/* ── 6. Trazabilidad (el punto era blanco a mano) ──────────── */
+html[data-tema="oscuro"] .traza-list li::before { background: var(--bg-card); }
+html[data-tema="oscuro"] .traza-list li:first-child::before { background: var(--accent); }
+
+/* ── 7. Rueda de cupos (degradado blanco a mano) ───────────── */
+html[data-tema="oscuro"] .iosp-card { background: linear-gradient(180deg, #1e2937, #141c26); }
+
+/* ── 8. Contrato ───────────────────────────────────────────── */
+html[data-tema="oscuro"] .ctr-progress { background: var(--bg-soft); }
+html[data-tema="oscuro"] .ctr-acepto { border-color: rgba(214, 218, 9, .45); }
+html[data-tema="oscuro"] .ctr-visor { background: rgba(2, 6, 12, .78); }
+html[data-tema="oscuro"] .ctr-visor-body iframe { background: #0b1016; }
+/* El lienzo de la firma y la firma del resumen se quedan BLANCOS a
+   propósito: la tinta se dibuja en azul oscuro (#16202e) y así es como
+   sale impresa en el PDF del contrato. */
+html[data-tema="oscuro"] .ctr-canvas,
+html[data-tema="oscuro"] .ctr-res-firma img { background: #ffffff; border-color: var(--border-strong); }
+html[data-tema="oscuro"] .ctr-acu-i { border-color: var(--border-strong); }
+html[data-tema="oscuro"] .ctr-acu-i.ctr-falta { border-color: var(--error); background: rgba(248, 113, 113, .10); }
+
+/* ── 9. Esqueletos (capa 5) ─────────────────────────────────
+   Su brillo va de --border a #F1F5FA escrito a mano: en oscuro sería
+   una franja blanca. Se rehace en gris carbón. */
+html[data-tema="oscuro"] .sep-sk {
+  background: linear-gradient(90deg, rgba(255,255,255,.07) 25%, rgba(255,255,255,.15) 37%, rgba(255,255,255,.07) 63%);
+  background-size: 400% 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-tema="oscuro"] .sep-sk { background: rgba(255,255,255,.08); }
+}
+
+/* ── 10. Loader de creación del contrato ───────────────────── */
+html[data-tema="oscuro"] .ctrload { background: rgba(4, 8, 13, .88); }
+html[data-tema="oscuro"] .ctrload-card { background: var(--bg-card); border-color: var(--border); }
+html[data-tema="oscuro"] .ctrload-t { color: var(--titulo); }
+html[data-tema="oscuro"] .ctrload-pista { background: rgba(255, 255, 255, .10); }
+
+/* ── 11. SweetAlert2 (viene de CDN) ────────────────────────── */
+html[data-tema="oscuro"] .swal2-popup {
+  background: #1a2431 !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border) !important;
+}
+html[data-tema="oscuro"] .swal2-title { color: var(--titulo) !important; }
+html[data-tema="oscuro"] .swal2-html-container,
+html[data-tema="oscuro"] .swal2-content { color: var(--text-soft) !important; }
+/* El aviso de confirmar la asesoría trae DOS colores ESCRITOS EN LÍNEA
+   dentro del HTML (app.js): azul #263143 y gris #44546b. Un estilo en
+   línea gana a cualquier hoja, así que aquí sí hace falta !important o
+   el texto del horario queda invisible sobre el aviso oscuro. */
+html[data-tema="oscuro"] .swal2-html-container b       { color: var(--titulo) !important; }
+html[data-tema="oscuro"] .swal2-html-container b + br + span,
+html[data-tema="oscuro"] .swal2-html-container > span  { color: var(--text-soft) !important; }
+html[data-tema="oscuro"] .swal2-styled.swal2-confirm { color: #101822 !important; }
+html[data-tema="oscuro"] .swal2-styled.swal2-cancel  { background: #33415a !important; color: #e9eef5 !important; }
+html[data-tema="oscuro"] .swal2-close { color: var(--text-soft) !important; }
+html[data-tema="oscuro"] .swal2-container.swal2-backdrop-show { background: rgba(2, 6, 12, .55); }
+
+/* ── 12. Loader antiguo (ya no se usa: lo sustituyó el esqueleto) ── */
+html[data-tema="oscuro"] .loader { background: rgba(4, 8, 13, .78); }
