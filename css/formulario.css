@@ -1,0 +1,222 @@
+/* ============================================================
+ * SEP COLOMBIA — ZONA DE ESTUDIANTES · FORMULARIO SUMMER
+ * © Oscar Polanía — Experto en Soluciones Digitales · +57 310 323 0712
+ * Software propietario; cualquier modificación por terceros anula la garantía.
+ * ------------------------------------------------------------
+ * FASE 3 SEP · ENTREGA 3 (16/08/2026) — bloques 1 a 7.
+ *
+ * REGLA QUE SE SIGUIÓ (la dejó escrita css/tema-oscuro.css):
+ *   todo aquí usa las VARIABLES de styles.css (--bg-card, --text-main,
+ *   --border…), así que el modo oscuro sale solo y NO hubo que tocar
+ *   tema-oscuro.css. Si algún día se escribe un color a mano en este
+ *   archivo, hay que repasarlo allá.
+ *
+ * Va después de contrato.css y antes de tema-oscuro.css.
+ * ============================================================ */
+
+/* ── Barra de avance de la tarjeta del inicio ─────────────── */
+.fm-prog { height:8px; border-radius:999px; background:var(--bg-soft); overflow:hidden; margin:10px 0 6px; }
+.fm-prog i { display:block; height:100%; border-radius:999px;
+  background:linear-gradient(90deg, var(--accent-2), var(--accent)); transition:width .35s ease; }
+.fm-prog-t { margin:0 0 10px; font-weight:600; }
+
+/* ── Lista de bloques ─────────────────────────────────────── */
+.fm-lista { display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+.fm-item { display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  padding:12px 14px; background:var(--bg-card); border:1.5px solid var(--border);
+  border-radius:var(--r-md); box-shadow:var(--sh-sm); transition:transform .12s ease, border-color .18s ease; }
+.fm-item:active { transform:scale(.99); }
+.fm-item:hover { border-color:var(--border-strong); }
+.fm-item.cerrado { opacity:.55; }
+.fm-ic { font-size:1.45rem; line-height:1; }
+.fm-tx { flex:1; min-width:0; }
+.fm-tx b { display:block; font-family:var(--font-display); font-size:.92rem; color:var(--text-main);
+  line-height:1.3; overflow:hidden; text-overflow:ellipsis; }
+.fm-tx small { display:block; margin-top:2px; font-size:.78rem; color:var(--text-muted); }
+
+.fm-pill { flex:none; font-size:.72rem; font-weight:800; padding:5px 10px; border-radius:var(--r-pill);
+  background:var(--bg-soft); color:var(--text-soft); border:1px solid var(--border); white-space:nowrap; }
+/* Sin colores a mano: la píldora se pinta con currentColor, así el verde
+   del tema claro (--ok #16a34a) y el del oscuro (#34d399) salen solos. */
+.fm-pill.ok { color:var(--ok); border-color:currentColor; background:transparent; }
+.fm-pill.go { color:var(--primary); border-color:currentColor; background:var(--accent-soft); }
+html[data-tema="oscuro"] .fm-pill.go { color:var(--accent-light); }
+
+/* ── Cierre de la parte 1 ─────────────────────────────────── */
+.fm-fin { text-align:center; }
+.fm-fin-ic { font-size:2.2rem; }
+.fm-fin p { margin:6px 0 0; color:var(--text-soft); font-size:.94rem; line-height:1.5; }
+
+/* ── Avisos dentro de un bloque ───────────────────────────── */
+.fm-aviso { margin:0 0 14px; padding:10px 12px; font-size:.86rem; line-height:1.5;
+  color:var(--text-soft); background:var(--accent-soft); border:1px solid var(--accent-2);
+  border-radius:var(--r-md); }
+.fm-cerrado { margin:0 0 14px; padding:10px 12px; font-size:.86rem; font-weight:700;
+  color:var(--text-soft); background:var(--bg-soft); border:1px solid var(--border);
+  border-radius:var(--r-md); text-align:center; }
+
+/* ── Datos precargados (bloque 1) ─────────────────────────── */
+.fm-pre-f { display:flex; justify-content:space-between; gap:12px; padding:8px 0;
+  border-bottom:1px dashed var(--border); font-size:.9rem; }
+.fm-pre-f:last-child { border-bottom:none; }
+.fm-pre-f span { color:var(--text-muted); }
+.fm-pre-f b { color:var(--text-main); text-align:right; word-break:break-word; }
+
+/* ── Campos ───────────────────────────────────────────────── */
+.fm-f { margin:0 0 14px; }
+.fm-f > label { display:block; font-size:.84rem; font-weight:700; color:var(--text-soft);
+  margin:0 0 6px; line-height:1.4; }
+.fm-req { color:var(--error); margin-left:3px; }
+.fm-ay { display:block; font-size:.78rem; color:var(--text-muted); line-height:1.45; margin:0 0 6px; }
+
+.fm-f input[type=text], .fm-f input[type=tel], .fm-f input[type=email],
+.fm-f select, .fm-f textarea,
+.fm-sf input[type=text], .fm-sf input[type=tel] {
+  width:100%; padding:12px 14px; font-family:inherit; font-size:1rem; color:var(--text-main);
+  background:var(--bg-card); border:1.5px solid var(--border-strong); border-radius:var(--r-md); }
+.fm-f textarea { resize:vertical; min-height:84px; line-height:1.5; }
+.fm-f input:focus, .fm-f select:focus, .fm-f textarea:focus, .fm-sf input:focus {
+  outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+html[data-tema="oscuro"] .fm-f input:focus, html[data-tema="oscuro"] .fm-f select:focus,
+html[data-tema="oscuro"] .fm-f textarea:focus, html[data-tema="oscuro"] .fm-sf input:focus {
+  border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+.fm-f input[disabled], .fm-f select[disabled], .fm-f textarea[disabled],
+.fm-sf input[disabled] { background:var(--bg-soft); color:var(--text-soft); }
+
+/* Sí / No */
+.fm-sino { display:flex; gap:10px; }
+.fm-op { flex:1; padding:12px 10px; font-size:.95rem; font-weight:700; color:var(--text-soft);
+  background:var(--bg-card); border:1.5px solid var(--border-strong); border-radius:var(--r-md); }
+/* --accent como FONDO: la tinta va en --on-primary, que es el token que
+   el tema oscuro define para eso (en claro no existe y cae a --primary). */
+.fm-op.sel { color:var(--on-primary, var(--primary)); background:var(--accent); border-color:var(--accent-2); }
+.fm-op[disabled] { opacity:.6; }
+
+/* Casilla */
+.fm-check { display:flex; align-items:flex-start; gap:10px; padding:12px;
+  background:var(--bg-soft); border:1.5px solid var(--border); border-radius:var(--r-md);
+  font-size:.9rem; font-weight:600; color:var(--text-soft); line-height:1.45; cursor:pointer; }
+.fm-check input { margin-top:2px; width:20px; height:20px; accent-color:var(--primary); flex:none; }
+html[data-tema="oscuro"] .fm-check input { accent-color:var(--accent); }
+
+/* Fecha (abre la rueda) */
+.fm-fecha { display:flex; align-items:center; gap:10px; width:100%; padding:12px 14px;
+  font-family:inherit; font-size:1rem; font-weight:600; color:var(--text-muted); text-align:left;
+  background:var(--bg-card); border:1.5px dashed var(--border-strong); border-radius:var(--r-md); }
+.fm-fecha.con { color:var(--text-main); border-style:solid; }
+.fm-fecha:active { transform:scale(.99); }
+.fm-fecha[disabled] { background:var(--bg-soft); }
+.fm-fecha-ic { font-size:1.05rem; }
+.fm-fecha-t { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Habilidades */
+.fm-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.fm-chip { padding:9px 13px; font-size:.86rem; font-weight:600; color:var(--text-soft);
+  background:var(--bg-card); border:1.5px solid var(--border-strong); border-radius:var(--r-pill); }
+.fm-chip.sel { color:var(--on-primary, var(--primary)); background:var(--accent); border-color:var(--accent-2); }
+.fm-chip-n { margin-top:8px; font-weight:700; }
+
+/* Grupos de campos en línea */
+.fm-grupo { margin:0 0 16px; padding:12px; background:var(--bg-soft);
+  border:1px solid var(--border); border-radius:var(--r-md); }
+.fm-grupo-h { font-family:var(--font-display); font-size:.86rem; font-weight:800;
+  color:var(--text-main); margin:0 0 8px; }
+.fm-grupo-c { display:grid; grid-template-columns:1fr; gap:10px; }
+.fm-grupo-c .fm-f { margin:0; }
+@media (min-width:520px) { .fm-grupo-c { grid-template-columns:1fr 1fr; } }
+
+/* Líneas repetibles */
+.fm-f-lista > label { margin-bottom:8px; }
+.fm-linea { margin:0 0 10px; padding:10px 12px; background:var(--bg-soft);
+  border:1px solid var(--border); border-radius:var(--r-md); }
+.fm-linea-h { display:flex; align-items:center; justify-content:space-between; margin:0 0 8px; }
+.fm-linea-h b { font-size:.78rem; font-weight:800; color:var(--text-muted);
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-pill);
+  min-width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; }
+.fm-quitar { font-size:.9rem; font-weight:800; color:var(--error); background:transparent;
+  padding:4px 8px; border-radius:var(--r-sm); }
+.fm-quitar:active { opacity:.55; }
+.fm-linea-c { display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:520px) { .fm-linea-c { grid-template-columns:1fr 1fr; } }
+.fm-sf label { display:block; font-size:.76rem; font-weight:600; color:var(--text-muted); margin:0 0 4px; }
+.fm-agregar { width:100%; padding:11px; font-size:.9rem; font-weight:700; color:var(--primary);
+  background:var(--primary-soft); border:1.5px dashed var(--border-strong); border-radius:var(--r-md); }
+html[data-tema="oscuro"] .fm-agregar { color:var(--accent-light); }
+.fm-agregar:active { transform:scale(.99); }
+
+/* ============================================================
+   RUEDA DE FECHA (día · mes · AÑO)
+   ============================================================
+   El .iosp-* de la rueda de cupos ya está en styles.css y el tema
+   oscuro ya lo repasa. Aquí solo van las tres piezas que NO existían
+   en la Zona de estudiantes porque vivían únicamente en SEP GROUP:
+   el título, la fila de flechas y las flechas. */
+.iosp-year { font-family:var(--font-display); font-weight:800; font-size:1.05rem;
+  color:var(--primary); }
+html[data-tema="oscuro"] .iosp-year { color:var(--text-main); }
+.iosp-nav { display:flex; padding:2px 10px; }
+.iosp-nav--up { padding-top:6px; }
+.iosp-arrow { flex:1; background:transparent; border:none; cursor:pointer;
+  font-size:.9rem; color:var(--text-soft); opacity:.75; padding:4px 0;
+  border-radius:var(--r-sm); transition:background .16s ease, opacity .16s ease; }
+.iosp-arrow:hover { background:var(--primary-soft); opacity:1; }
+.iosp-arrow:active { transform:translateY(1px); }
+
+/* ============================================================
+   ENTREGA 4 — BLOQUES 8 A 14
+   ============================================================ */
+
+/* Encabezado con el nombre del estudiante (bloque 13). */
+.fm-intro { margin:0 0 12px; padding:10px 12px; font-size:.86rem; font-weight:700;
+  color:var(--primary); background:var(--primary-soft); border-radius:var(--r-md);
+  line-height:1.35; }
+html[data-tema="oscuro"] .fm-intro { color:var(--text-main); }
+
+/* Un subcampo que necesita toda la línea (Sí/No y texto largo dentro
+   de una experiencia laboral). */
+@media (min-width:520px) { .fm-sf-ancho { grid-column:1 / -1; } }
+.fm-sf-ancho textarea { width:100%; }
+.fm-sino-mini .fm-op { padding:8px 10px; font-size:.85rem; }
+
+/* ------------------------------------------------------------
+   DOCUMENTOS (bloque 14)
+   ------------------------------------------------------------ */
+.fm-f-doc label { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.fm-doc-max { font-size:.7rem; font-weight:600; color:var(--text-muted);
+  background:var(--bg-soft); border:1px solid var(--border); border-radius:var(--r-pill);
+  padding:2px 8px; }
+
+/* La caja es contenteditable SOLO para poder pegar con Ctrl+V: el
+   cursor se esconde para que nadie crea que puede escribir dentro. */
+.fm-drop {
+  border:2px dashed var(--border-strong); border-radius:var(--r-md);
+  background:var(--bg-soft); padding:16px 12px; text-align:center; cursor:pointer;
+  color:var(--text-soft); font-size:.83rem; line-height:1.4; outline:none;
+  min-height:72px; display:flex; align-items:center; justify-content:center;
+  transition:border-color .16s ease, background .16s ease, box-shadow .16s ease;
+  -webkit-user-select:text; user-select:text; caret-color:transparent;
+}
+.fm-drop:hover { border-color:var(--primary); background:var(--primary-soft); }
+.fm-drop:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+.fm-drop.is-drag { border-color:var(--primary); background:var(--primary-soft); }
+.fm-drop-m { display:block; pointer-events:none; }
+.fm-drop-m small { display:block; margin-top:4px; font-size:.72rem; color:var(--text-muted); }
+.fm-drop-m--mal { color:var(--error); font-weight:700; }
+
+.fm-doc-ok { display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-md);
+  padding:10px 12px; }
+.fm-doc-ic { font-size:1.1rem; }
+.fm-doc-t { flex:1; min-width:110px; font-size:.85rem; font-weight:700; color:var(--ok, #15803d); }
+.fm-doc-b { display:flex; gap:6px; flex-wrap:wrap; }
+.fm-mini { font-size:.76rem; font-weight:700; padding:6px 10px; border-radius:var(--r-pill);
+  color:var(--primary); background:var(--primary-soft); border:1px solid var(--border); }
+.fm-mini:active { transform:scale(.97); }
+.fm-doc-vacio { margin:0; font-size:.8rem; color:var(--text-muted); }
+.fm-doc-sub { min-height:44px; }
+
+/* Aviso de los documentos que puede subir más adelante. */
+.fm-pend { margin:10px 0 0; padding:10px 12px; font-size:.82rem; line-height:1.4;
+  color:var(--warn, #b45309); background:rgba(245,158,11,.10);
+  border:1px solid rgba(245,158,11,.30); border-radius:var(--r-md); }
+html[data-tema="oscuro"] .fm-pend { color:#fbbf24; }
