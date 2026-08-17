@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  SEP COLOMBIA — ZONA DE ESTUDIANTES (PWA, antes SEP-AGENDA)
+  © Oscar Polanía — Experto en Soluciones Digitales · +57 310 323 0712
+  Software propietario; cualquier modificación por terceros anula la garantía.
+  FASE ACTUAL: Fase 3 (11/08/2026) — ZONA DE ESTUDIANTES (contrato)
+  ============================================================
+-->
+<html lang="es-CO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+  <title>SEP Colombia · Zona de Estudiantes</title>
+  <meta name="theme-color" content="#263143">
+  <link rel="icon" href="https://botheart911.github.io/SEP-GROUP/img/sep_logo.png">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- CAPAS (07/08) — van SIEMPRE después de styles.css -->
+  <link rel="stylesheet" href="css/capa-0-avisos.css">
+  <link rel="stylesheet" href="css/capa-1-micro.css">
+  <link rel="stylesheet" href="css/capa-5-esqueletos.css">
+  <link rel="stylesheet" href="css/capa-7-ripple.css">
+  <link rel="stylesheet" href="css/contrato.css">
+  <link rel="stylesheet" href="css/formulario.css">
+  <!-- MODO OSCURO (11/08) — va SIEMPRE la última, después de las capas -->
+  <link rel="stylesheet" href="css/tema-oscuro.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- ANTIPARPADEO DEL TEMA — deja puesto data-tema ANTES del primer
+       pintado; si no, la app nace clara y parpadea a oscuro al cargar el
+       JS. Sin elección guardada, sigue al sistema. -->
+  <script>
+    (function () {
+      try {
+        var g = localStorage.getItem('sep.tema.v1');
+        var oscuro = (g === 'oscuro') || (!g && window.matchMedia &&
+                      window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-tema', oscuro ? 'oscuro' : 'claro');
+        if (oscuro) {
+          var m = document.querySelector('meta[name="theme-color"]');
+          if (m) m.setAttribute('content', '#0e141c');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div id="loader" class="loader hidden">
+    <div class="spinner">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+  </div>
+
+  <!-- ============================ LOGIN ============================ -->
+  <section id="view-login" class="view active">
+    <div class="login-wrap">
+      <div class="login-card">
+        <div class="login-badge"><span>Zona de estudiantes</span></div>
+        <img class="login-logo" id="login-logo"
+             src="https://botheart911.github.io/SEP-GROUP/img/sep_logo.png"
+             alt="SEP Colombia">
+        <h1>ZONA DE ESTUDIANTES</h1>
+        <p class="sub">Agenda tu asesoría, firma tu contrato y sigue tu proceso</p>
+
+        <div class="field">
+          <label for="in-clave">Clave de acceso</label>
+          <div class="input-shell">
+            <span class="ic">🔑</span>
+            <input id="in-clave" class="clave" type="text" autocomplete="off"
+                   placeholder="ej. camila0601">
+          </div>
+        </div>
+
+        <button id="btn-login" class="btn btn-accent btn-block" style="margin-top:6px;">
+          Ingresar
+        </button>
+
+        <p class="hint">
+          🔒 Tu <b>clave de acceso</b> te fue enviada por correo y WhatsApp cuando tu perfil
+          fue aprobado. Si aún no la tienes, comunícate con tu asesor(a) comercial.
+        </p>
+
+        <div class="login-foot">
+          <b>SEP Colombia Group SAS</b><br>
+          <span class="app-version-line">Versión —</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ HOME ============================ -->
+  <section id="view-home" class="view">
+    <div class="topbar">
+      <img id="home-logo" src="https://botheart911.github.io/SEP-GROUP/img/sep_logo.png" alt="SEP"
+           width="512" height="512" decoding="async">
+      <div>
+        <div class="tb-title">ZONA DE ESTUDIANTES</div>
+        <div class="tb-sub">SEP Colombia Group</div>
+      </div>
+      <div class="spacer"></div>
+      <button id="btn-logout" class="tb-logout">Salir</button>
+    </div>
+
+    <div class="container" id="home-content">
+      <!-- render dinámico -->
+    </div>
+  </section>
+
+  <!-- ======================= CONTRATO (Fase 3) ======================= -->
+  <section id="view-contrato" class="view">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Tu contrato</div>
+        <div class="tb-sub" id="ctr-sub">Lectura</div>
+      </div>
+      <div class="spacer"></div>
+      <button id="ctr-salir" class="tb-logout">Salir</button>
+    </div>
+    <div class="ctr-progress"><i id="ctr-bar"></i></div>
+    <div class="container" id="ctr-cont"><!-- render dinámico --></div>
+  </section>
+
+  <!-- ============== VISOR DE ARCHIVOS (Fase 5) — no abre pestaña ============== -->
+  <div id="ctr-visor" class="ctr-visor hidden">
+    <div class="ctr-visor-card">
+      <div class="ctr-visor-head">
+        <h3 id="ctr-visor-title">Archivo</h3>
+        <div class="ctr-visor-acc">
+          <a id="ctr-visor-bajar" class="ctr-mini" href="#" target="_blank" rel="noopener">⬇ Descargar</a>
+          <button id="ctr-visor-close" class="ctr-visor-x" aria-label="Cerrar">✕</button>
+        </div>
+      </div>
+      <div class="ctr-visor-body">
+        <iframe id="ctr-visor-frame" src="about:blank" title="Vista previa"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FORMULARIO SUMMER (Fase 3 SEP · Entrega 3) ============ -->
+  <section id="view-formulario" class="view">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">Tu formulario</div>
+        <div class="tb-sub" id="fm-sub">Bloques</div>
+      </div>
+      <div class="spacer"></div>
+      <button id="fm-salir" class="tb-logout">Salir</button>
+    </div>
+    <div class="ctr-progress"><i id="fm-bar"></i></div>
+    <div class="container" id="fm-cont"><!-- render dinámico --></div>
+  </section>
+
+  <!-- ====== RUEDA iOS DE FECHA (día · mes · AÑO) ======
+       Portada de SEP GROUP (vista Contador) y hecha genérica: cada campo
+       del formulario dice qué años admite (pasadas, futuras o mayor de
+       20 años). La rueda de cupos de más abajo NO se tocó. -->
+  <div id="form-picker" class="iosp-overlay hidden">
+    <div class="iosp-card">
+      <div class="iosp-head">
+        <button type="button" id="fpick-cancel" class="iosp-btn">Cancelar</button>
+        <span class="iosp-year" id="fpick-title">Elige la fecha</span>
+        <button type="button" id="fpick-ok" class="iosp-btn ok">Listo</button>
+      </div>
+      <div class="iosp-nav iosp-nav--up">
+        <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-dia" data-d="-1" aria-label="Día arriba">▲</button>
+        <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-mes" data-d="-1" aria-label="Mes arriba">▲</button>
+        <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-anio" data-d="-1" aria-label="Año arriba">▲</button>
+      </div>
+      <div class="iosp-wheels">
+        <div class="iosp-highlight"></div>
+        <div class="iosp-col" id="fpick-dia"></div>
+        <div class="iosp-col" id="fpick-mes"></div>
+        <div class="iosp-col" id="fpick-anio"></div>
+      </div>
+      <div class="iosp-nav iosp-nav--down">
+        <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-dia" data-d="1" aria-label="Día abajo">▼</button>
+        <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-mes" data-d="1" aria-label="Mes abajo">▼</button>
+        <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-anio" data-d="1" aria-label="Año abajo">▼</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== RUEDA iOS — SOLO CUPOS DISPONIBLES ============== -->
+  <div id="ios-picker" class="iosp-overlay hidden">
+    <div class="iosp-card">
+      <div class="iosp-head">
+        <button type="button" id="iosp-cancel" class="iosp-btn">Cancelar</button>
+        <span class="iosp-title">Elige tu horario</span>
+        <button type="button" id="iosp-ok" class="iosp-btn ok">Listo</button>
+      </div>
+      <div id="iosp-body">
+        <div class="iosp-wheels">
+          <div class="iosp-highlight"></div>
+          <div class="iosp-col col-dia" id="iosp-dia"></div>
+          <div class="iosp-col" id="iosp-hora"></div>
+        </div>
+      </div>
+      <div id="iosp-empty" class="iosp-none hidden">
+        <span class="em">📭</span>
+        Por ahora no hay horarios disponibles.<br>Vuelve a intentarlo más tarde.
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== CREACIÓN DEL CONTRATO (ajuste 4 · 11/08) ======
+       Único efecto de carga distinto del esqueleto en toda la web: mientras
+       el backend copia la plantilla, mete las firmas y genera el PDF (es la
+       llamada más larga de la app) el estudiante NO puede quedarse mirando
+       una pantalla quieta ni salirse. -->
+  <div id="ctr-load" class="ctrload hidden" role="alertdialog" aria-live="assertive" aria-modal="true">
+    <div class="ctrload-card">
+      <div class="ctrload-cielo">
+        <span class="ctrload-avion">✈️</span>
+        <i class="ctrload-nube n1"></i><i class="ctrload-nube n2"></i><i class="ctrload-nube n3"></i>
+      </div>
+      <div class="ctrload-t" id="ctr-load-t">Tu contrato se está creando</div>
+      <div class="ctrload-p" id="ctr-load-p">
+        Por favor no salgas de esta vista antes de finalizar ✈️🤩
+      </div>
+      <div class="ctrload-pista"><i id="ctr-load-bar"></i></div>
+      <div class="ctrload-paso" id="ctr-load-paso">Preparando tu documento…</div>
+    </div>
+  </div>
+
+  <script src="version.js"></script>
+  <script src="app.js"></script>
+  <script src="js/contrato.js"></script>
+  <script src="js/formulario.js"></script>
+
+  <!-- CAPAS (07/08) — van SIEMPRE después de app.js -->
+  <script src="js/capa-5-esqueletos.js"></script>
+  <script src="js/capa-7-ripple.js"></script>
+
+  <!-- MODO OSCURO (11/08) — el último de todos -->
+  <script src="js/tema-oscuro.js"></script>
+</body>
+</html>
