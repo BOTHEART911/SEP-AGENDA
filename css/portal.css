@@ -1,0 +1,133 @@
+/* ============================================================
+ * SEP COLOMBIA — ZONA DE ESTUDIANTES · TABLERO (Fase 4 · Entrega 6)
+ * © Oscar Polanía — Experto en Soluciones Digitales · +57 310 323 0712
+ * Software propietario; cualquier modificación por terceros anula
+ * la garantía de funcionamiento.
+ * ------------------------------------------------------------
+ * Punto 4 del plan: acciones pendientes, accesos rápidos, mis
+ * documentos, mis pagos, seguimiento y contacto.
+ *
+ * Usa los mismos tokens de styles.css (--primary, --accent, --ok…):
+ * aquí no se inventa ni un color. Todo lo que se agrega va con
+ * prefijo .pt- (portal) o .doc- (documentos) para no chocar con
+ * nada del contrato, el formulario ni las ofertas.
+ * ============================================================ */
+
+/* ── ACCIONES PENDIENTES (4.3) ────────────────────────────── */
+.pt-pend { background:var(--bg-card); border:1px solid var(--border); border-left:4px solid var(--accent);
+  border-radius:var(--r-lg); box-shadow:var(--sh-sm); padding:18px 18px 8px; margin-bottom:16px; }
+.pt-pend h2 { font-family:var(--font-display); font-weight:700; font-size:1.05rem; color:var(--primary);
+  margin:0 0 4px; display:flex; align-items:center; gap:9px; }
+.pt-pend .pt-pend-sub { color:var(--text-muted); font-size:.82rem; margin:0 0 12px; }
+.pt-pend-n { margin-left:auto; background:var(--accent); color:var(--primary);
+  font-size:.78rem; font-weight:800; padding:3px 10px; border-radius:var(--r-pill); }
+
+.pt-act { display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  background:transparent; padding:12px 4px; border-bottom:1px dashed var(--border);
+  transition:background .12s; border-radius:var(--r-sm); }
+.pt-act:last-child { border-bottom:none; }
+.pt-act:active { background:var(--primary-soft); }
+.pt-act .pt-act-ic { flex-shrink:0; width:40px; height:40px; border-radius:12px; display:flex;
+  align-items:center; justify-content:center; font-size:1.25rem; background:var(--accent-soft); }
+.pt-act .pt-act-x { flex:1; min-width:0; }
+.pt-act .pt-act-t { font-family:var(--font-display); font-weight:700; font-size:.98rem; color:var(--text-main); }
+.pt-act .pt-act-p { font-size:.83rem; color:var(--text-soft); margin-top:2px; }
+.pt-act .pt-act-go { flex-shrink:0; color:var(--text-muted); font-size:1.1rem; font-weight:700; }
+
+/* Todo al día. */
+.pt-aldia { text-align:center; padding:8px 0 16px; }
+.pt-aldia .pt-aldia-ic { font-size:2.4rem; }
+.pt-aldia p { color:var(--text-soft); margin:6px 0 0; font-size:.94rem; }
+
+/* ── ACCESOS RÁPIDOS (4.2) ────────────────────────────────── */
+.pt-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; }
+@media (min-width:520px) { .pt-grid { grid-template-columns:repeat(3, 1fr); } }
+
+.pt-tile { position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--r-md);
+  box-shadow:var(--sh-sm); padding:14px 13px; text-align:left; min-height:104px;
+  transition:transform .12s, box-shadow .12s; }
+.pt-tile:active { transform:scale(.97); }
+.pt-tile .pt-tile-ic { font-size:1.5rem; line-height:1; }
+.pt-tile .pt-tile-t { font-family:var(--font-display); font-weight:700; font-size:.92rem;
+  color:var(--primary); line-height:1.2; }
+.pt-tile .pt-tile-n { position:absolute; top:9px; right:9px; min-width:20px; height:20px; padding:0 6px;
+  border-radius:var(--r-pill); background:var(--error); color:#fff; font-size:.72rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center; }
+.pt-tile.pt-off { opacity:.62; }
+.pt-tile.pt-off .pt-tile-ic { filter:grayscale(1); }
+.pt-tile .pt-lock { position:absolute; top:9px; right:10px; font-size:.9rem; opacity:.7; }
+
+/* Explicación del bloqueo (4.2: "explicar por qué un módulo está bloqueado") */
+.pt-why { background:rgba(38,49,67,.05); border:1px dashed var(--border-strong);
+  border-radius:var(--r-md); padding:12px 14px; margin-top:12px; }
+.pt-why b { display:block; font-family:var(--font-display); color:var(--primary); font-size:.9rem; margin-bottom:3px; }
+.pt-why p { margin:0; color:var(--text-soft); font-size:.87rem; line-height:1.45; }
+
+/* ── CONTACTO (4.15) ──────────────────────────────────────── */
+.pt-wa { display:flex; align-items:center; justify-content:center; gap:9px; width:100%;
+  margin-top:14px; padding:14px 20px; border-radius:var(--r-pill); font-family:var(--font-display);
+  font-weight:700; font-size:.98rem; background:#25d366; color:#0b3d20; box-shadow:var(--sh-md);
+  text-decoration:none; }
+.pt-wa:active { transform:scale(.97); }
+
+/* ── MIS PAGOS (4.12) ─────────────────────────────────────── */
+.pay-card { border:1px solid var(--border); border-radius:var(--r-md); padding:14px; margin-bottom:12px;
+  background:var(--bg-card); }
+.pay-head { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.pay-head .pay-ic { font-size:1.3rem; }
+.pay-head .pay-t { font-family:var(--font-display); font-weight:700; font-size:.98rem; color:var(--primary); flex:1; }
+.pay-pill { font-size:.74rem; font-weight:800; color:#fff; padding:4px 10px; border-radius:var(--r-pill); }
+.pay-val { font-family:var(--font-display); font-weight:800; font-size:1.3rem; color:var(--primary); margin-bottom:6px; }
+.pay-max { display:inline-flex; align-items:center; gap:6px; font-size:.82rem; font-weight:700;
+  color:#8a5a00; background:rgba(245,158,11,.14); border:1px solid rgba(245,158,11,.3);
+  padding:6px 12px; border-radius:var(--r-pill); margin-top:8px; }
+.pay-link { display:inline-flex; align-items:center; gap:6px; margin-top:10px; font-size:.86rem;
+  font-weight:700; color:var(--info); text-decoration:none; }
+
+/* ── SEGUIMIENTO (4.13) ───────────────────────────────────── */
+.seg-g { border:1px solid var(--border); border-radius:var(--r-md); margin-bottom:10px; overflow:hidden; }
+.seg-h { display:flex; align-items:center; gap:10px; width:100%; padding:14px;
+  background:var(--bg-card); text-align:left; }
+.seg-h .seg-t { flex:1; font-family:var(--font-display); font-weight:700; font-size:.95rem; color:var(--primary); }
+.seg-h .seg-n { font-size:.76rem; font-weight:800; color:var(--text-muted); }
+.seg-h .seg-ar { color:var(--text-muted); transition:transform .18s; }
+.seg-g.open .seg-h .seg-ar { transform:rotate(90deg); }
+.seg-b { display:none; padding:2px 16px 14px; background:rgba(38,49,67,.03); }
+.seg-g.open .seg-b { display:block; }
+.seg-b ul { list-style:none; margin:0; padding:8px 0 0; }
+.seg-b li { position:relative; padding:0 0 12px 20px; color:var(--text-soft); font-size:.88rem; line-height:1.45; }
+.seg-b li::before { content:''; position:absolute; left:4px; top:6px; width:8px; height:8px;
+  border-radius:50%; background:var(--accent); }
+.seg-b li::after { content:''; position:absolute; left:7.5px; top:16px; bottom:0; width:1px; background:var(--border); }
+.seg-b li:last-child { padding-bottom:2px; }
+.seg-b li:last-child::after { display:none; }
+
+/* ── MIS DOCUMENTOS (4.9 y 4.10) ──────────────────────────── */
+.doc-item { border:1px solid var(--border); border-radius:var(--r-md); padding:14px; margin-bottom:12px;
+  background:var(--bg-card); }
+.doc-top { display:flex; align-items:flex-start; gap:10px; }
+.doc-top .doc-ic { font-size:1.25rem; line-height:1.2; }
+.doc-top .doc-x { flex:1; min-width:0; }
+.doc-name { font-family:var(--font-display); font-weight:700; font-size:.95rem; color:var(--primary); line-height:1.25; }
+.doc-ay { font-size:.82rem; color:var(--text-muted); margin-top:3px; }
+.doc-pill { display:inline-flex; align-items:center; gap:5px; margin-top:8px;
+  font-size:.75rem; font-weight:800; color:#fff; padding:4px 11px; border-radius:var(--r-pill); }
+.doc-nota { margin-top:10px; background:rgba(220,38,38,.07); border:1px solid rgba(220,38,38,.28);
+  border-radius:var(--r-sm); padding:10px 12px; color:#8c1d1d; font-size:.86rem; line-height:1.45; }
+.doc-nota b { display:block; margin-bottom:2px; }
+.doc-acc { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+.doc-acc .btn { flex:1; min-width:132px; padding:11px 14px; font-size:.88rem; }
+.doc-file { display:none; }
+.doc-aviso { background:rgba(37,99,235,.07); border:1px solid rgba(37,99,235,.25);
+  border-radius:var(--r-md); padding:12px 14px; color:var(--text-soft); font-size:.86rem;
+  line-height:1.45; margin-bottom:14px; }
+
+/* ── MODO OSCURO ──────────────────────────────────────────
+   tema-oscuro.css redefine los tokens, así que casi todo se hereda.
+   Aquí solo lo que va con color escrito a mano. */
+[data-tema="oscuro"] .pt-why { background:rgba(255,255,255,.04); }
+[data-tema="oscuro"] .seg-b { background:rgba(255,255,255,.03); }
+[data-tema="oscuro"] .pay-max { color:#f6c14b; background:rgba(245,158,11,.12); }
+[data-tema="oscuro"] .doc-nota { color:#ffb4b4; background:rgba(220,38,38,.12); }
+[data-tema="oscuro"] .pt-wa { color:#062a13; }
