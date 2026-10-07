@@ -189,6 +189,18 @@
         '</div>';
     }
 
+    /* 07/10/2026 — Procesos liberó su oferta elegida: puede volver a
+       escoger (si la puerta sigue abierta). */
+    if (o.ultima && o.ultima.liberada && o.habilitado) {
+      return '' +
+        '<div class="card">' +
+        '  <h2><span class="em">💼</span> Ofertas de empleo</h2>' +
+        '  <div class="ofe-res ofe-res--ok">🔓 <b>Procesos liberó tu selección.</b> ' +
+        '  Ya puedes volver a escoger la oferta que prefieras.</div>' +
+        '  <button class="btn btn-accent btn-block" id="ofe-abrir" style="margin-top:10px">Escoger otra oferta</button>' +
+        '</div>';
+    }
+
     if (!o.habilitado) {
       var motivos = (o.motivos || []).map(function (m) {
         return '<li>' + esc(m.texto) + '</li>';
@@ -359,11 +371,39 @@
         '</div>';
     }
 
+    /* 07/10/2026 (pedido de Javier) — CON OFERTA ELEGIDA NO HAY CATÁLOGO.
+       El servidor ya solo manda su oferta (soloMia); aquí no se pintan
+       filtros ni lista, solo su oferta y cómo cambiarla. Las demás no
+       viajan, así que no hay nada que esconder en pantalla. */
+    if (d.mia || d.soloMia) {
+      if (d.mia && !d.mia.pendienteConfirmacion) {
+        html += '' +
+          '<button class="btn btn-accent btn-block" id="ofe-ver-mia">Ver mi oferta completa</button>' +
+          '<div class="card ofe-lock-card"><div class="ofe-lock">' +
+          '  <div class="ofe-lock-ic">🔒</div>' +
+          '  <p>Ya escogiste tu oferta, así que el catálogo queda cerrado. ' +
+          '     Si necesitas cambiarla, habla con tu asesor de Procesos: ' +
+          '     solo él puede liberarla para que vuelvas a escoger.</p>' +
+          '</div></div>';
+      }
+      cont.innerHTML = html;
+      bindLista();
+      var verMia = q('#ofe-ver-mia');
+      if (verMia) verMia.addEventListener('click', function () { abrirFicha(d.mia.ofertaId); });
+      return;
+    }
+
     /* Entrega 3 — la aplicación anterior que no fue aprobada. Se
        muestra arriba de la lista para que entienda por qué vuelve a
        poder escoger. */
     if (!d.mia && d.ultima && d.ultima.resultado === 'NO_APROBADA') {
       html += '<div class="card">' + bloqueResultado(d.ultima) + '</div>';
+    } else if (!d.mia && d.ultima && d.ultima.liberada) {
+      /* 07/10/2026 — Procesos liberó su oferta elegida. */
+      html += '<div class="card"><div class="ofe-res ofe-res--ok">🔓 <b>Procesos liberó tu selección.</b> ' +
+        'Ya puedes volver a escoger la oferta que prefieras.' +
+        (d.ultima.liberadaFecha ? ' <span class="muted">(' + esc(d.ultima.liberadaFecha) + ')</span>' : '') +
+        '</div></div>';
     }
 
     /* Puerta cerrada: se ven las ofertas, pero no se pueden tomar. */
@@ -472,7 +512,11 @@
       pintarFicha();
     }, function (e) {
       quitar();
-      pintarLista();
+      /* 07/10/2026 — si el servidor la negó (p. ej. ya tiene otra oferta
+         elegida), la lista que hay en memoria quedó vieja: se vuelve a
+         pedir en un solo viaje en vez de repintar lo de antes. */
+      if (/oferta elegida/i.test(String(e && e.message || e))) abrir();
+      else pintarLista();
       if (typeof error_ === 'function') error_(e.message || e);
     });
   }
@@ -535,8 +579,10 @@
         '<div class="ofe-lock-ic">' + (mia.pendienteConfirmacion ? '⏳' : '📌') + '</div><p>' +
         (mia.pendienteConfirmacion
           ? 'Tienes una oferta pendiente de confirmar: <b>'
-          : 'Ya tienes una oferta seleccionada: <b>') +
-        esc(mia.posicion) + '</b> en ' + esc(mia.empleador) + '.</p></div></div>';
+          : (mia.ofertaId === o.id ? 'Esta es tu oferta seleccionada: <b>' : 'Ya tienes una oferta seleccionada: <b>')) +
+        esc(mia.posicion) + '</b> en ' + esc(mia.empleador) + '.' +
+        (mia.pendienteConfirmacion ? '' : ' Si necesitas cambiarla, habla con tu asesor de Procesos.') +
+        '</p></div></div>';
     } else if (!o.elegible || !puerta.ok) {
       var todos = (o.motivos || []).concat(puerta.ok ? [] : puerta.motivos);
       acciones = '<div class="card ofe-lock-card"><div class="ofe-lock">' +

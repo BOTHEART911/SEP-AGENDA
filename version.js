@@ -9,6 +9,17 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * AJUSTE 07/10/2026 — TU OFERTA ELEGIDA (pedido de Javier).
+ *   · Cuando ya escogiste una oferta, en Ofertas de Empleo solo ves
+ *     la tuya: el catálogo queda cerrado aunque se publiquen ofertas
+ *     nuevas, y no puedes cambiarte por tu cuenta. Si necesitas
+ *     cambiarla, Procesos libera tu selección; entonces vuelves a ver
+ *     todas las ofertas (con un aviso de que fue liberada) y te llega
+ *     un correo. Si la entrevista sale no aprobada, el catálogo se
+ *     reabre solo, como antes.
+ *   Archivos tocados: js/ofertas.js (y, en Apps Script,
+ *   OfertasEstudiante.gs y OfertasPdf.gs).
+ * ------------------------------------------------------------
  * CORRECCIÓN (04/09/2026) — VUELVE "REHACER MI CONTRATO".
  *   Con el rediseño de la Zona de estudiantes (Entrega 6), la tarjeta
  *   del contrato dejaba de pintarse apenas el estudiante firmaba, y
@@ -84,4 +95,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.09.04.03";
+var APP_VERSION = "2026.10.07.01";
