@@ -308,7 +308,7 @@
       (p.cuenta ? '  <div class="kv"><div class="k">Cuenta</div><div class="v">' + esc(p.cuenta) + '</div></div>' : '') +
       (p.fechaMax ? '  <div class="pay-max">⏰ Fecha máxima de pago: ' + esc(p.fechaMax) + '</div>' : '') +
       (p.comprobante
-        ? '  <a class="pay-link" href="' + esc(p.comprobante) + '" target="_blank" rel="noopener">📎 Ver mi comprobante</a>'
+        ? '  <a class="pay-link" data-privado="1" href="' + esc(p.comprobante) + '" target="_blank" rel="noopener">📎 Ver mi comprobante</a>'
         : '') +
       '</div>';
   }

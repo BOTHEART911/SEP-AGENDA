@@ -114,7 +114,7 @@ var CONTRATO = (function () {
                       ? 'Tu contrato está firmado y <b>validado</b> por SEP Colombia Group.'
                       : 'Tu contrato está firmado. Nuestro equipo lo está revisando.') + '</p>' +
         '  </div>' +
-        '  <a class="btn btn-accent btn-block" href="' + esc(c.contratoUrl) + '" target="_blank" rel="noopener">⬇️ Descargar mi contrato</a>' +
+        '  <a class="btn btn-accent btn-block" data-privado="1" href="' + esc(c.contratoUrl) + '" target="_blank" rel="noopener">⬇️ Descargar mi contrato</a>' +
         (c.puedeFirmar
           ? '  <button class="btn btn-ghost btn-block" id="ctr-abrir" style="margin-top:8px">✍️ Rehacer mi contrato</button>' +
             '  <p class="muted center" style="margin:8px 0 0">Puedes rehacerlo mientras nuestro equipo no lo valide.</p>'
@@ -374,12 +374,22 @@ var CONTRATO = (function () {
   /* Visor dentro de la app: no abre pestaña. */
   function verArchivo(url, titulo) {
     if (!url) return;
+    if (typeof archivoSinGoogle_ === 'function' && archivoSinGoogle_()) return avisoArchivoSinGoogle_();   // 07/10/2026
     var m = String(url).match(/[-\w]{25,}/);
     q('#ctr-visor-title').textContent = titulo || 'Archivo';
     q('#ctr-visor-frame').src = m ? 'https://drive.google.com/file/d/' + m[0] + '/preview' : url;
     var a = q('#ctr-visor-bajar');
     if (a) a.href = m ? 'https://drive.google.com/uc?export=download&id=' + m[0] : url;
+    visorPrivado_(m ? m[0] : '', url);
     q('#ctr-visor').classList.remove('hidden');
+  }
+  /* 07/10/2026 — documentos privados: «Abrir en Drive» (pestaña normal,
+     donde Google sí deja iniciar sesión) y la nota del correo. */
+  function visorPrivado_(id, url) {
+    var ab = q('#ctr-visor-abrir');
+    if (ab) ab.href = id ? 'https://drive.google.com/file/d/' + id + '/view' : url;
+    var n = q('#ctr-visor-nota');
+    if (n) n.textContent = (typeof archivoNotaTexto_ === 'function') ? archivoNotaTexto_() : '';
   }
   function cerrarVisor() {
     var v = q('#ctr-visor'); if (!v) return;
@@ -896,7 +906,7 @@ var CONTRATO = (function () {
       '  <div class="ctr-ok-ic">🎉</div>' +
       '  <h2 style="justify-content:center">¡Tu contrato quedó firmado!</h2>' +
       '  <p class="muted center">Te enviamos una copia en PDF a tu correo. Nuestro equipo revisará tus documentos y te avisará el siguiente paso.</p>' +
-      '  <a class="btn btn-accent btn-block" href="' + esc(url) + '" target="_blank" rel="noopener" style="margin-top:10px">⬇️ Descargar mi contrato</a>' +
+      '  <a class="btn btn-accent btn-block" data-privado="1" href="' + esc(url) + '" target="_blank" rel="noopener" style="margin-top:10px">⬇️ Descargar mi contrato</a>' +
       '  <button class="btn btn-ghost btn-block" id="ctr-fin" style="margin-top:8px">Volver al inicio</button>' +
       '</div>';
     q('#ctr-fin').addEventListener('click', function () { showView('home'); });
@@ -920,6 +930,7 @@ var CONTRATO = (function () {
     /* FASE 4 · ENTREGA 6 — el visor de archivos ya existía aquí y ahora lo
        usan también "Mis documentos" y "Mi contrato". Se expone en vez de
        escribir un segundo visor. */
-    visor: verArchivo
+    visor: verArchivo,
+    visorPrivado: visorPrivado_
   };
 })();

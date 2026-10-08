@@ -91,7 +91,7 @@
 
     if (d.tieneArchivo) {
       acciones.push('<button class="btn btn-ghost" data-ver="' + esc(d.clave) + '">👁 Ver</button>');
-      acciones.push('<a class="btn btn-ghost" href="' + esc(bajar(d.url)) + '" target="_blank" rel="noopener">⬇️ Descargar</a>');
+      acciones.push('<a class="btn btn-ghost" data-privado="1" href="' + esc(bajar(d.url)) + '" target="_blank" rel="noopener">⬇️ Descargar</a>');
     }
     if (d.puedeSubir) {
       acciones.push('<button class="btn btn-accent" data-subir="' + esc(d.clave) + '">' +

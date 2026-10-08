@@ -112,6 +112,34 @@ function escapeHtml_(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;')
 function toast_(icon, title){ Swal.fire({ icon, title, timer: 1400, showConfirmButton:false }); }
 function error_(msg){ Swal.fire({ icon:'error', title:'Ups', text:String(msg||'Ocurrió un error') }); }
 
+/* 07/10/2026 — DOCUMENTOS PRIVADOS. Tus archivos (contrato, cédula,
+   comprobantes, formulario, Mis documentos, hoja de vida) ya no son
+   públicos: se abren con tu cuenta de Google, la del correo con el que
+   te registraste. Si ese correo no es cuenta de Google, la app te lo
+   explica en vez de abrir algo que Google no te va a mostrar.
+   Los enlaces de tus archivos llevan data-privado="1". */
+function archivoAcceso_(){ return (EST && EST.accesoArchivos) || null; }
+function archivoSinGoogle_(){ const a = archivoAcceso_(); return !!(a && a.google === false); }
+function avisoArchivoSinGoogle_(){
+  const a = archivoAcceso_() || {};
+  Swal.fire({ icon:'info', title:'Tu archivo está guardado de forma privada',
+    html: 'Por seguridad, tus documentos solo se abren con una cuenta de Google, y tu correo <b>' +
+          escapeHtml_(a.correo || '') + '</b> no es una cuenta de Google.<br><br>' +
+          'Aquí sigues viendo el estado de cada documento. Si necesitas una copia, pídesela a tu asesor(a).',
+    confirmButtonText: 'Entendido' });
+}
+function archivoNotaTexto_(){
+  const a = archivoAcceso_(); const c = a && a.correo;
+  return '🔒 Archivo privado: se abre con tu cuenta de Google' + (c ? ' (' + c + ')' : '') +
+         '. Si no lo ves, toca «Abrir en Drive» e inicia sesión con ese correo. ' +
+         'Si lo acabas de subir, tu acceso se activa en máximo 30 minutos.';
+}
+document.addEventListener('click', function (e) {
+  const a = e.target && e.target.closest ? e.target.closest('a[data-privado]') : null;
+  if (!a || !archivoSinGoogle_()) return;
+  e.preventDefault(); e.stopPropagation(); avisoArchivoSinGoogle_();
+}, true);
+
 /* ============================================================
  * LOGIN
  * ============================================================ */

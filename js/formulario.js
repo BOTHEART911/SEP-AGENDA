@@ -1030,6 +1030,7 @@ var FORMU = (function () {
   function verDoc_(k) {
     var url = txt(S.vals[k]);
     if (!url) return;
+    if (typeof archivoSinGoogle_ === 'function' && archivoSinGoogle_()) return avisoArchivoSinGoogle_();   // 07/10/2026
     var c = campoDe_(k);
     var m = String(url).match(/[-\w]{25,}/);
     var tit = q('#ctr-visor-title'); if (tit) tit.textContent = (c && c.l) || 'File';
@@ -1037,6 +1038,7 @@ var FORMU = (function () {
     if (fr) fr.src = m ? 'https://drive.google.com/file/d/' + m[0] + '/preview' : url;
     var a = q('#ctr-visor-bajar');
     if (a) a.href = m ? 'https://drive.google.com/uc?export=download&id=' + m[0] : url;
+    if (typeof CONTRATO !== 'undefined' && CONTRATO.visorPrivado) CONTRATO.visorPrivado(m ? m[0] : '', url);
     var v = q('#ctr-visor'); if (v) v.classList.remove('hidden');
   }
 

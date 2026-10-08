@@ -9,6 +9,15 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * TUS DOCUMENTOS SON PRIVADOS (07/10/2026).
+ *   · Tu contrato, cédula, comprobantes, formulario, Mis documentos y
+ *     hoja de vida ya no se abren con solo tener el enlace: se abren
+ *     con tu cuenta de Google (el correo con el que te registraste).
+ *     El visor trae "Abrir en Drive" y una nota con tu correo. Si tu
+ *     correo no es cuenta de Google, la app te lo explica.
+ *   Archivos: app.js, index.html, css/contrato.css, js/contrato.js,
+ *   js/formulario.js, js/documentos.js, js/portal.js, version.js.
+ * ------------------------------------------------------------
  * RENDIMIENTO (07/10/2026).
  *   · Las respuestas grandes viajan comprimidas (gzip) y los tiempos de
  *     cada pantalla se anotan en la hoja MEDICION pegados a la
@@ -102,4 +111,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.07.03";
+var APP_VERSION = "2026.10.07.04";
