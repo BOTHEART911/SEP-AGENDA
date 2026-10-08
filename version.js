@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * RENDIMIENTO (07/10/2026).
+ *   · Las respuestas grandes viajan comprimidas (gzip) y los tiempos de
+ *     cada pantalla se anotan en la hoja MEDICION pegados a la
+ *     siguiente lectura (sin viajes extra).
+ *   Archivos tocados: app.js, version.js (y Lectura.gs/Medicion.gs en
+ *   el backend).
+ * ------------------------------------------------------------
  * AJUSTE 07/10/2026 — TU OFERTA ELEGIDA (pedido de Javier).
  *   · Cuando ya escogiste una oferta, en Ofertas de Empleo solo ves
  *     la tuya: el catálogo queda cerrado aunque se publiquen ofertas
@@ -95,4 +102,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.07.02";
+var APP_VERSION = "2026.10.07.03";

@@ -25,13 +25,38 @@ function startLoading(){ loadingCount++; if (loadingCount === 1){ loaderTimer = 
 function stopLoading(){ if (loadingCount === 0) return; loadingCount--; if (loadingCount === 0){ if (loaderTimer){ clearTimeout(loaderTimer); loaderTimer = null; } loader.classList.add('hidden'); } }
 
 /* ================== API (text/plain evita preflight CORS) ================== */
+/* 07/10/2026 — RESPUESTA COMPRIMIDA Y MEDICIÓN (igual que SEP-GROUP).
+   · z=1: si el navegador abre gzip (DecompressionStream) el servidor
+     manda lo grande comprimido ({ok, gz}); sin soporte, como antes.
+   · Tiempos de pantalla: ruta, ms y KB viajan pegados a la siguiente
+     lectura (_mf) a la hoja MEDICION. Siempre lo lento; del resto 1 de 3. */
+const API_GZ = (typeof DecompressionStream === 'function');
+const MED_PEND = [];
+function medAnotarFront_(ruta, ms, kb, det){
+  if (ms < 3000 && Math.random() >= 1/3) return;
+  if (MED_PEND.length >= 8) MED_PEND.shift();
+  MED_PEND.push(['agenda:' + ruta, Math.round(ms), Math.round(kb * 10) / 10, det || '']);
+}
+async function apiAbrirGz_(b64){
+  const bin = atob(b64), u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  const flujo = new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'));
+  return JSON.parse(await new Response(flujo).text());
+}
 async function apiGet(action, params = {}){
   startLoading();
+  const t0 = performance.now();
   try{
     const url = new URL(API_BASE);
-    url.search = new URLSearchParams({ action, ...params }).toString();
+    const extra = {};
+    if (API_GZ) extra.z = '1';
+    if (MED_PEND.length) extra._mf = JSON.stringify(MED_PEND.splice(0, MED_PEND.length));
+    url.search = new URLSearchParams({ action, ...params, ...extra }).toString();
     const r = await fetch(url.toString(), { method:'GET' });
-    const j = await r.json();
+    const txt = await r.text();
+    let j = JSON.parse(txt);
+    if (j && j.gz) j = await apiAbrirGz_(j.gz);
+    medAnotarFront_(action, performance.now() - t0, txt.length / 1024, j && j.ok === false ? 'error' : '');
     if (!j.ok) throw new Error(j.error || 'Error');
     return j.data;
   } finally { stopLoading(); }
