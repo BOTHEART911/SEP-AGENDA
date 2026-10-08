@@ -129,6 +129,7 @@ function avisoArchivoSinGoogle_(){
     confirmButtonText: 'Entendido' });
 }
 function archivoNotaTexto_(){
+  return '';   /* Pausado 07/10/2026: los documentos siguen como estaban (con enlace). */
   const a = archivoAcceso_(); const c = a && a.correo;
   return '🔒 Archivo privado: se abre con tu cuenta de Google' + (c ? ' (' + c + ')' : '') +
          '. Si no lo ves, toca «Abrir en Drive» e inicia sesión con ese correo. ' +
