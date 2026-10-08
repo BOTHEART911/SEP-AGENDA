@@ -9,6 +9,10 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * UNA SOLA RECARGA POR VERSIÓN (08/10/2026).
+ *   · Al publicar, el aviso de versión nueva ya no puede recargar la
+ *     app en bucle (app.js, checkVersion).
+ * ------------------------------------------------------------
  * TUS DOCUMENTOS SON PRIVADOS (07/10/2026).
  *   · Tu contrato, cédula, comprobantes, formulario, Mis documentos y
  *     hoja de vida ya no se abren con solo tener el enlace: se abren
@@ -111,4 +115,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.07.05";
+var APP_VERSION = "2026.10.08.01";
