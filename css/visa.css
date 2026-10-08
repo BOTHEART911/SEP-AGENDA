@@ -75,3 +75,20 @@
 .vs-nota { font-size:.82rem; color:var(--text-muted); margin:10px 0 0; }
 .vs-go.ocupado { opacity:.7; pointer-events:none; }
 .vs-go:disabled { opacity:.55; }
+
+/* ---------- 5.3-B · Pre-Arrival y vuelo ---------- */
+.vs-pre, .vs-vuelo { margin-bottom:14px; border:1px solid var(--accent-2); box-shadow:0 0 0 2px var(--accent-soft), var(--sh-sm); }
+.vs-pre.is-hecho, .vs-vuelo-aprobado { border-color:var(--border); box-shadow:var(--sh-sm); }
+.vs-pre-h { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.vs-pre-h > div { flex:1; min-width:0; }
+.vs-pre-ic { flex-shrink:0; width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-size:1.35rem; background:var(--primary-soft); }
+.vs-pre-t { font-family:var(--font-display); font-weight:800; font-size:1.08rem; color:var(--primary); }
+.vs-pill { flex-shrink:0; color:#fff; font-size:.72rem; font-weight:800; padding:4px 9px; border-radius:var(--r-pill); max-width:46%; text-align:center; }
+.vs-link { background:transparent; border:0; color:var(--primary); font-weight:700; font-size:.86rem; padding:10px 0 0; cursor:pointer; }
+.vs-rifa { background:var(--accent-soft); border-radius:var(--r-md); padding:10px 12px; font-size:.9rem; color:var(--text-main); margin:0 0 12px; }
+.vs-rifa.is-si { background:rgba(22,163,74,.12); }
+.vs-fin { background:rgba(4,120,87,.12); border-radius:var(--r-md); padding:14px; text-align:center; color:var(--text-main); font-size:.95rem; margin-bottom:12px; }
+.vs-vuelo-acc { display:flex; flex-wrap:wrap; gap:8px; }
+.vs-vuelo-acc .btn { flex:1 1 160px; }
+.vs-vuelo-acc .btn.ocupado { opacity:.7; pointer-events:none; }

@@ -9,6 +9,16 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * PRE-ARRIVAL Y VUELO (08/10/2026 · Fase 5.3-B).
+ *   · Con la visa aprobada, el módulo Visa muestra el Pre-Arrival
+ *     (video + confirmación) y el mensaje de la rifa: si cargas tu
+ *     itinerario dentro de las 72 horas participas por un premio SEP.
+ *   · Tu vuelo se carga ahí mismo, en imagen (pantallazo) o PDF; queda
+ *     también en Mis documentos. Si SEP lo aprueba: Programa completado.
+ *   · Mis documentos: al cargar, el inicio se actualiza en el mismo
+ *     viaje (ya no hace una segunda consulta).
+ *   Archivos: js/visa.js, css/visa.css, js/documentos.js, version.js.
+ * ------------------------------------------------------------
  * MÓDULO VISA (08/10/2026 · Fase 5.3-A).
  *   · Nueva tarjeta "Visa" en Accesos rápidos: se ve desde la
  *     inscripción y se abre al quedar Contratado. Estado actual, lo que
@@ -122,4 +132,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.08.02";
+var APP_VERSION = "2026.10.08.03";

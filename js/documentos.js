@@ -9,7 +9,8 @@
  * Puntos 4.9 y 4.10 del plan.
  *
  *   · Los DIEZ documentos en un solo lugar, en el orden del pliego.
- *   · Solo PDF.
+ *   · Solo PDF. FASE 5.3-B: el Itinerario de vuelo admite además
+ *     imagen JPG/PNG (lo dice el backend en `acepta`).
  *   · FASE 5.1-C (regla global): mientras el documento NO esté
  *     aprobado, el participante puede reemplazarlo. Aprobado = queda
  *     bloqueado. Si SEP lo rechaza, vuelve a pendiente con el motivo
@@ -77,7 +78,7 @@
 
     var aviso = '' +
       '<div class="doc-aviso">' +
-      '  📄 Todos los documentos se cargan en <b>PDF</b> y pesan máximo <b>' + S.maxMb + ' MB</b>. ' +
+      '  📄 Los documentos se cargan en <b>PDF</b> (el itinerario de vuelo también en imagen) y pesan máximo <b>' + S.maxMb + ' MB</b>. ' +
       '  Mientras SEP no lo apruebe puedes reemplazarlo; una vez <b>aprobado</b> queda bloqueado. ' +
       '  Si lo rechazamos, te decimos el motivo y lo vuelves a cargar.' +
       '</div>';
@@ -96,7 +97,7 @@
     if (d.puedeSubir) {
       acciones.push('<button class="btn btn-accent" data-subir="' + esc(d.clave) + '">' +
                     (d.estado === 'RECHAZADO' || d.estado === 'CORRECCION' ? '↩️ Volver a cargar'
-                      : (d.tieneArchivo ? '♻️ Reemplazar PDF' : '⬆️ Cargar PDF')) + '</button>');
+                      : (d.tieneArchivo ? '♻️ Reemplazar' + (conImg(d) ? '' : ' PDF') : '⬆️ Cargar ' + (conImg(d) ? 'archivo' : 'PDF'))) + '</button>');
     }
 
     return '' +
@@ -126,8 +127,16 @@
           esc(d.porQue || 'Tu asesor(a) de Procesos lo abrirá cuando te toque cargarlo.') + '</p>'
         : '') +
       (acciones.length ? '  <div class="doc-acc">' + acciones.join('') + '</div>' : '') +
-      '  <input type="file" accept="application/pdf,.pdf" class="doc-file" data-file="' + esc(d.clave) + '">' +
+      '  <input type="file" accept="' + esc(d.acepta || 'application/pdf,.pdf') + '" class="doc-file" data-file="' + esc(d.clave) + '">' +
       '</div>';
+  }
+
+  /* FASE 5.3-B — ¿este documento admite imagen? (lo dice el backend). */
+  function conImg(d) { return /image\//.test(String(d && d.acepta || '')); }
+  function mimeDe(nombre, file) {
+    if (/\.png$/i.test(nombre)) return 'image/png';
+    if (/\.jpe?g$/i.test(nombre)) return 'image/jpeg';
+    return file.type === 'application/pdf' ? file.type : 'application/pdf';
   }
 
   function bajar(url) {
@@ -181,9 +190,10 @@
     if (!d) return;
 
     var nombre = String(file.name || '');
-    if (!/\.pdf$/i.test(nombre)) {
-      return Swal.fire({ icon: 'warning', title: 'Solo PDF',
-        text: d.nombre + ' debe ser un archivo PDF.' });
+    var img = conImg(d);
+    if (!(img ? /\.(pdf|jpe?g|png)$/i : /\.pdf$/i).test(nombre)) {
+      return Swal.fire({ icon: 'warning', title: img ? 'PDF o imagen' : 'Solo PDF',
+        text: d.nombre + (img ? ' debe ser un PDF o una imagen JPG/PNG.' : ' debe ser un archivo PDF.') });
     }
     if (file.size > S.maxMb * 1024 * 1024) {
       return Swal.fire({ icon: 'warning', title: 'Archivo muy pesado',
@@ -212,7 +222,8 @@
 
         var t0 = Date.now();
         apiPost('subirDocumento', Object.assign(cred(), {
-          doc: clave, filename: nombre, mime: file.type || 'application/pdf', base64: base64
+          doc: clave, filename: nombre, mime: mimeDe(nombre, file), base64: base64,
+          conPortal: true                      // 5.3-B: el tablero viene en la misma respuesta
         }), { escritura: true }).then(function (res) {
           try { (window.__sepMed = window.__sepMed || []).push({ ruta: 'subirDocumento', ms: Date.now() - t0 }); } catch (_) {}
           S.ocupado = false;
@@ -224,7 +235,12 @@
             : Promise.resolve();
           fin.then(function () {
             pintar();
-            refrescarInicio();
+            /* Un solo viaje: si el backend mandó el tablero, se pone en
+               memoria; si es el backend anterior, se pide como antes. */
+            if (res && res.portal && typeof EST !== 'undefined' && EST) {
+              EST.portal = res.portal;
+              try { if (typeof renderHome_ === 'function') renderHome_(); } catch (_) {}
+            } else refrescarInicio();
           });
         }, function (e) {
           S.ocupado = false;
