@@ -36,12 +36,32 @@ async function apiGet(action, params = {}){
     return j.data;
   } finally { stopLoading(); }
 }
-async function apiPost(action, body = {}){
+/* FASE 5.1-C (07/10/2026) — un solo reintento seguro.
+   · Las ESCRITURAS (opts.escritura) viajan con un id de petición (rid):
+     si la red corta o llega el 404 de echo de Google, se reintenta UNA
+     vez con el MISMO rid y el servidor devuelve la misma respuesta sin
+     repetir la acción (idempotencia por rid en el router).
+   · Las lecturas se reintentan igual, sin rid: repetir una lectura no
+     cambia nada. Nunca hay reintentos ciegos de una escritura. */
+function ridNuevo_(){ return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+async function apiPost(action, body = {}, opts = {}){
   startLoading();
   try{
     const url = API_BASE + '?action=' + encodeURIComponent(action);
-    const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
-    const j = await r.json();
+    const datos = opts.escritura ? Object.assign({}, body, { rid: body.rid || ridNuevo_() }) : body;
+    const enviar = async () => {
+      const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(datos) });
+      if (r.status === 404) { const e = new Error('echo404'); e.reintentar = true; throw e; }
+      try { return await r.json(); } catch (_) { const e = new Error('RESPUESTA_NO_JSON'); e.reintentar = true; throw e; }
+    };
+    let j;
+    try { j = await enviar(); }
+    catch (e) {
+      if (!(e && (e.reintentar || e instanceof TypeError || e.name === 'TypeError'))) throw e;
+      await new Promise(res => setTimeout(res, 800));
+      try { j = await enviar(); }
+      catch (_) { throw new Error('No se pudo conectar con el servidor. Revisa tu conexión e intenta de nuevo.'); }
+    }
     if (!j.ok) throw new Error(j.error || 'Error');
     return j.data;
   } finally { stopLoading(); }

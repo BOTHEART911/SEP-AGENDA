@@ -10,9 +10,10 @@
  *
  *   · Los DIEZ documentos en un solo lugar, en el orden del pliego.
  *   · Solo PDF.
- *   · Después de Guardar, el participante NO puede reemplazar el
- *     archivo. Si Procesos le pide corrección, ese documento —y solo
- *     ese— se reabre, y al volver a guardar se bloquea otra vez.
+ *   · FASE 5.1-C (regla global): mientras el documento NO esté
+ *     aprobado, el participante puede reemplazarlo. Aprobado = queda
+ *     bloqueado. Si SEP lo rechaza, vuelve a pendiente con el motivo
+ *     y se puede volver a cargar.
  *   · La cédula y la hoja de vida solo se visualizan y descargan.
  *
  * QUIÉN DECIDE
@@ -28,7 +29,7 @@
 (function () {
   'use strict';
 
-  var S = { datos: null, maxMb: 5 };
+  var S = { datos: null, maxMb: 5, ocupado: false };
 
   function q(s, c) { return (c || document).querySelector(s); }
   function qq(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
@@ -67,7 +68,7 @@
      ============================================================ */
   function pintar() {
     var lista = (S.datos && S.datos.documentos) || [];
-    var porCorregir = lista.filter(function (d) { return d.estado === 'CORRECCION'; }).length;
+    var porCorregir = lista.filter(function (d) { return d.estado === 'RECHAZADO' || d.estado === 'CORRECCION'; }).length;
     var pendientes  = lista.filter(function (d) { return d.estado === 'PENDIENTE'; }).length;
 
     q('#doc-sub').textContent = pendientes || porCorregir
@@ -77,8 +78,8 @@
     var aviso = '' +
       '<div class="doc-aviso">' +
       '  📄 Todos los documentos se cargan en <b>PDF</b> y pesan máximo <b>' + S.maxMb + ' MB</b>. ' +
-      '  Una vez guardas uno, ya no se puede reemplazar: si necesitas cambiarlo, tu asesor(a) de Procesos ' +
-      '  te lo reabre.' +
+      '  Mientras SEP no lo apruebe puedes reemplazarlo; una vez <b>aprobado</b> queda bloqueado. ' +
+      '  Si lo rechazamos, te decimos el motivo y lo vuelves a cargar.' +
       '</div>';
 
     q('#doc-cont').innerHTML = aviso + lista.map(item).join('');
@@ -94,7 +95,8 @@
     }
     if (d.puedeSubir) {
       acciones.push('<button class="btn btn-accent" data-subir="' + esc(d.clave) + '">' +
-                    (d.estado === 'CORRECCION' ? '↩️ Volver a cargar' : '⬆️ Cargar PDF') + '</button>');
+                    (d.estado === 'RECHAZADO' || d.estado === 'CORRECCION' ? '↩️ Volver a cargar'
+                      : (d.tieneArchivo ? '♻️ Reemplazar PDF' : '⬆️ Cargar PDF')) + '</button>');
     }
 
     return '' +
@@ -107,8 +109,11 @@
       '      <span class="doc-pill" style="background:' + esc(d.estadoColor) + '">' + esc(d.estadoLabel) + '</span>' +
       '    </span>' +
       '  </div>' +
-      (d.estado === 'CORRECCION' && d.nota
-        ? '  <div class="doc-nota"><b>Qué debes corregir</b>' + esc(d.nota) + '</div>'
+      ((d.estado === 'RECHAZADO' || d.estado === 'CORRECCION') && d.nota
+        ? '  <div class="doc-nota"><b>Por qué lo rechazamos</b>' + esc(d.nota) + '</div>'
+        : '') +
+      (d.bloqueado && !d.soloVer
+        ? '  <p class="muted" style="margin:10px 0 0">🔒 Aprobado: ya no necesitas hacer nada con este documento.</p>'
         : '') +
       /* FASE 4.1 · punto 2 — "No disponible todavía" ya no es un
          silencio: se le dice que el documento SÍ existe en su proceso
@@ -185,15 +190,17 @@
         text: 'El archivo pesa más de ' + S.maxMb + ' MB. Compáctalo antes de subirlo.' });
     }
 
+    if (S.ocupado) return;
     Swal.fire({
       icon: 'question',
-      title: '¿Guardar este documento?',
+      title: d.tieneArchivo && d.estado !== 'RECHAZADO' ? '¿Reemplazar este documento?' : '¿Guardar este documento?',
       html: '<b style="color:#263143">' + esc(d.nombre) + '</b><br>' +
-            '<span style="color:#44546b">Una vez guardado no podrás reemplazarlo. ' +
-            'Revisa que sea el archivo correcto.</span>',
+            '<span style="color:#44546b">Queda en revisión. Lo puedes reemplazar mientras SEP no lo apruebe; ' +
+            'una vez aprobado queda bloqueado.</span>',
       showCancelButton: true, confirmButtonText: 'Sí, guardar', cancelButtonText: 'Volver'
     }).then(function (r) {
-      if (!r.isConfirmed) return;
+      if (!r.isConfirmed || S.ocupado) return;
+      S.ocupado = true;   // escudo: ni doble toque ni dos subidas a la vez
       leer(file).then(function (base64) {
         var carga = (typeof CONTRATO !== 'undefined' && CONTRATO.cargando) ? CONTRATO.cargando : null;
         if (carga) carga.abrir({
@@ -203,9 +210,12 @@
           salir: 'Tu documento se está guardando. Si sales ahora, no quedará cargado.'
         });
 
+        var t0 = Date.now();
         apiPost('subirDocumento', Object.assign(cred(), {
           doc: clave, filename: nombre, mime: file.type || 'application/pdf', base64: base64
-        })).then(function (res) {
+        }), { escritura: true }).then(function (res) {
+          try { (window.__sepMed = window.__sepMed || []).push({ ruta: 'subirDocumento', ms: Date.now() - t0 }); } catch (_) {}
+          S.ocupado = false;
           S.datos = res;
           var fin = carga
             ? carga.listo({ titulo: '¡Listo! Tu documento quedó guardado',
@@ -217,10 +227,12 @@
             refrescarInicio();
           });
         }, function (e) {
+          S.ocupado = false;
           if (carga) carga.cerrar();
           if (typeof error_ === 'function') error_(e.message || e);
         });
       }, function () {
+        S.ocupado = false;
         Swal.fire({ icon: 'error', title: 'Ups', text: 'No se pudo leer el archivo.' });
       });
     });
