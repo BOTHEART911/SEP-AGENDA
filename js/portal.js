@@ -90,7 +90,7 @@
   function bloqueAccesos(p, e) {
     /* "Agendar asesoría" y "Firmar contrato" ya viven en sus propias
        tarjetas grandes; en la rejilla van los módulos de consulta. */
-    var enRejilla = ['PERFIL', 'DOCUMENTOS', 'OFERTAS', 'PAGOS', 'SEGUIMIENTO', 'MI_CONTRATO'];
+    var enRejilla = ['PERFIL', 'DOCUMENTOS', 'OFERTAS', 'VISA', 'PAGOS', 'SEGUIMIENTO', 'MI_CONTRATO'];
     var docs = (p && p.documentos) || {};
 
     var tiles = enRejilla.map(function (clave) {
@@ -261,6 +261,10 @@
         return;
       case 'documentos':
         if (typeof DOCUMENTOS !== 'undefined') DOCUMENTOS.abrir();
+        return;
+      /* FASE 5.3-A — módulo Visa (js/visa.js). */
+      case 'visa':
+        if (typeof VISA !== 'undefined') VISA.abrir();
         return;
       case 'pagos':       return abrirPagos(e);
       case 'seguimiento': return abrirSeguimiento(e);

@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * MÓDULO VISA (08/10/2026 · Fase 5.3-A).
+ *   · Nueva tarjeta "Visa" en Accesos rápidos: se ve desde la
+ *     inscripción y se abre al quedar Contratado. Estado actual, lo que
+ *     sigue, resultado consular y los 6 pasos con su video.
+ *   Archivos: js/visa.js, css/visa.css, js/portal.js, index.html,
+ *   version.js.
+ * ------------------------------------------------------------
  * UNA SOLA RECARGA POR VERSIÓN (08/10/2026).
  *   · Al publicar, el aviso de versión nueva ya no puede recargar la
  *     app en bucle (app.js, checkVersion).
@@ -115,4 +122,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.08.01";
+var APP_VERSION = "2026.10.08.02";
