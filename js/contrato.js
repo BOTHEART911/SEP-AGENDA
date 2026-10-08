@@ -260,15 +260,49 @@ var CONTRATO = (function () {
   /* ============================================================
      LECTURA POR BLOQUES
      ============================================================ */
+  /* 5.5-C (08/10/2026) — CERO TABLAS. Las tablas del contrato se leen en
+     tarjetas, sin correr la pantalla de lado en el celular:
+       · pares "NOMBRE:" → valor  → ficha de datos (etiqueta y valor);
+       · una sola fila (firmas)   → recuadros uno junto a otro;
+       · cabecera + filas         → una tarjeta por fila con cada celda
+                                     bajo su encabezado.
+     No se pierde ningún texto: cada celda sale completa y en su orden. */
+  function celdaHtml(t) {
+    var v = String(t == null ? '' : t).replace(/\r/g, '\n').trim();
+    return v ? esc(v).replace(/\n+/g, '<br>') : '<span class="ctr-vacio">—</span>';
+  }
+  function tablaHtml(filas) {
+    filas = (filas || []).filter(function (f) { return f && f.length; });
+    if (!filas.length) return '';
+    /* Ficha: filas de 2 celdas "ETIQUETA:" → valor; una fila con la segunda
+       celda vacía es un subtítulo de sección (p. ej. "DATOS DEL ESTUDIANTE"). */
+    var esPar = function (f) { return f.length === 2 && /:\s*$/.test(String(f[0] || '').trim()); };
+    var esSub = function (f) { return f.length <= 2 && String(f[0] || '').trim() && !String(f[1] || '').trim() && !esPar(f); };
+    var pares = filas.some(esPar) && filas.every(function (f) { return esPar(f) || esSub(f); });
+    if (pares) {
+      return '<div class="ctr-ficha">' + filas.map(function (f) {
+        if (esSub(f)) return '<div class="ctr-ficha__sub">' + celdaHtml(f[0]) + '</div>';
+        return '<div class="ctr-ficha__f"><span class="ctr-ficha__l">' + celdaHtml(String(f[0]).replace(/:\s*$/, '')) +
+          '</span><span class="ctr-ficha__v">' + celdaHtml(f[1]) + '</span></div>';
+      }).join('') + '</div>';
+    }
+    if (filas.length === 1) {
+      return '<div class="ctr-cajas">' + filas[0].map(function (c) {
+        return '<div class="ctr-caja">' + celdaHtml(c) + '</div>';
+      }).join('') + '</div>';
+    }
+    var cab = filas[0];
+    return '<div class="ctr-tarjetas">' + filas.slice(1).map(function (f) {
+      return '<div class="ctr-tarjeta">' + f.map(function (c, j) {
+        return '<div class="ctr-tarjeta__f' + (j === 0 ? ' ctr-tarjeta__f--t' : '') + '"><span class="ctr-tarjeta__l">' +
+          celdaHtml(cab[j]) + '</span><span class="ctr-tarjeta__v">' + celdaHtml(c) + '</span></div>';
+      }).join('') + '</div>';
+    }).join('') + '</div>';
+  }
+
   function itemHtml(it) {
     if (it.t === 'h') return '<h3 class="ctr-h">' + esc(it.x) + '</h3>';
-    if (it.t === 'tabla') {
-      return '<div class="ctr-tabla-wrap"><table class="ctr-tabla">' +
-        it.filas.map(function (f, i) {
-          var celdas = f.map(function (c) { return (i === 0 ? '<th>' : '<td>') + esc(c) + (i === 0 ? '</th>' : '</td>'); }).join('');
-          return '<tr>' + celdas + '</tr>';
-        }).join('') + '</table></div>';
-    }
+    if (it.t === 'tabla') return tablaHtml(it.filas || []);
     return '<p class="ctr-p">' + esc(it.x) + '</p>';
   }
 

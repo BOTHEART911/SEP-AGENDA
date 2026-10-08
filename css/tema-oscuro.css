@@ -149,7 +149,8 @@ html[data-tema="oscuro"] .iosp-title,
 html[data-tema="oscuro"] .iosp-item.sel,
 html[data-tema="oscuro"] .ctr-titulo,
 html[data-tema="oscuro"] .ctr-h,
-html[data-tema="oscuro"] .ctr-tabla th,
+html[data-tema="oscuro"] .ctr-tarjeta__f--t .ctr-tarjeta__v,
+html[data-tema="oscuro"] .ctr-ficha__sub,
 html[data-tema="oscuro"] .ctr-visor-head h3 {
   color: var(--titulo);
 }

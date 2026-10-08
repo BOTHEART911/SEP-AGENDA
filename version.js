@@ -128,8 +128,12 @@
  * firma del contrato, acuerdo de firma electrónica, modo oscuro,
  * esqueletos como único efecto de carga y resumen antes de firmar.
  * ------------------------------------------------------------
+ * FASE 5.5 · ENTREGA C (08/10/2026): el contrato sin tablas — datos de
+ * las partes en ficha, firmas en recuadros y precios por plan en
+ * tarjetas (js/contrato.js, css/contrato.css, css/tema-oscuro.css).
+ * ------------------------------------------------------------
  * Sube este número en cada despliegue del frontend. La app lo lee
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.08.03";
+var APP_VERSION = "2026.10.08.04";
