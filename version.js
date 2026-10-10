@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * RUEDAS iOS EN VEZ DE FECHAS DEL NAVEGADOR (10/10/2026 · 3).
+ *   · Las citas del CAS y del Consulado (módulo Visa) se eligen en la
+ *     rueda de la app, que ahora suma hora:minuto con a. m./p. m. Lo que
+ *     viaja al backend no cambia ('aaaa-mm-ddTHH:MM').
+ *   Archivos: index.html, js/formulario.js, js/visa.js,
+ *   css/formulario.css, version.js.
+ * ------------------------------------------------------------
  * FECHA Y HORA DE LA OFERTA (10/10/2026 · 2).
  *   · "Tu oferta de empleo" y el detalle ya no muestran el texto crudo
  *     del Date ("Wed Sep 16 2026 00:00:00 GMT-0500…"): el backend manda
@@ -174,4 +181,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.10.02";
+var APP_VERSION = "2026.10.10.03";

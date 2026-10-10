@@ -60,6 +60,38 @@
   }
   function aInput(s) { return String(s || '').replace(' ', 'T').slice(0, 16); }
 
+  /* 10/10/2026 — las citas se eligen en la RUEDA iOS de la app
+     (FORMU.rueda con hora), no en el calendario del navegador. El valor
+     que se envía no cambia: sigue en el input oculto como
+     'aaaa-mm-ddTHH:MM'; el campo visible solo muestra la fecha bonita. */
+  function campoCita(id, valor, titulo) {
+    var v = aInput(valor);
+    return '<input type="hidden" id="' + id + '" value="' + esc(v) + '">' +
+      '<input type="text" readonly inputmode="none" class="vs-in rueda-vis" data-rueda-de="' + id + '"' +
+      ' data-rueda-t="' + esc(titulo) + '" placeholder="Toca para elegir fecha y hora"' +
+      ' value="' + esc(v ? fechaBonita(v.replace('T', ' ')) : '') + '">';
+  }
+  function isoADmyHm(v) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(v || ''));
+    return m ? (m[3] + '/' + m[2] + '/' + m[1] + ' ' + m[4] + ':' + m[5]) : '';
+  }
+  function dmyHmAIso(v) {
+    var m = /^(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})$/.exec(String(v || ''));
+    return m ? (m[3] + '-' + m[2] + '-' + m[1] + 'T' + m[4] + ':' + m[5]) : '';
+  }
+  function abrirCita(vis) {
+    if (vis.disabled || S.ocupado) return;
+    var hid = q('#' + vis.getAttribute('data-rueda-de'));
+    if (!hid) return;
+    if (typeof FORMU === 'undefined' || !FORMU || typeof FORMU.rueda !== 'function') return;
+    FORMU.rueda(isoADmyHm(hid.value), 'futura', vis.getAttribute('data-rueda-t'), function (r) {
+      var iso = dmyHmAIso(r);
+      if (!iso) return;
+      hid.value = iso;
+      vis.value = fechaBonita(iso.replace('T', ' '));
+    }, false, { hora: true });
+  }
+
   /* ============================================================
      PINTADO
      ============================================================ */
@@ -115,10 +147,8 @@
                       '<p class="vs-nota">Tu carpeta ya fue entregada. Si cambió tu cita, avísale a tu asesor(a).</p>';
       }
       return html +
-        '<label class="vs-lab">Fecha y hora de tu cita en el CAS' +
-        '  <input type="datetime-local" class="vs-in" id="vs-cas" value="' + esc(aInput(c.cas)) + '"></label>' +
-        '<label class="vs-lab">Fecha y hora de tu cita en el Consulado' +
-        '  <input type="datetime-local" class="vs-in" id="vs-consul" value="' + esc(aInput(c.consul)) + '"></label>' +
+        '<label class="vs-lab">Fecha y hora de tu cita en el CAS' + campoCita('vs-cas', c.cas, 'Cita en el CAS') + '</label>' +
+        '<label class="vs-lab">Fecha y hora de tu cita en el Consulado' + campoCita('vs-consul', c.consul, 'Cita en el Consulado') + '</label>' +
         '<button class="btn btn-accent btn-block vs-go" data-paso="1">' + (hecho ? '💾 Actualizar mis fechas' : '🗓️ Registrar mi cita') + '</button>';
     }
     if (p.pide === 'ds160r') {
@@ -358,6 +388,12 @@
       });
     });
 
+    qq('.rueda-vis', cont).forEach(function (el) {
+      el.addEventListener('click', function () { abrirCita(el); });
+      el.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrirCita(el); }
+      });
+    });
     qq('.vs-go', cont).forEach(function (btn) {
       btn.addEventListener('click', function () { enviar(Number(btn.getAttribute('data-paso')), btn); });
     });

@@ -162,6 +162,19 @@ html[data-tema="oscuro"] .iosp-year { color:var(--text-main); }
 .iosp-arrow:hover { background:var(--primary-soft); opacity:1; }
 .iosp-arrow:active { transform:translateY(1px); }
 
+/* 10/10/2026 — fila de HORA (citas de la visa). Con dos filas la rueda
+   se compacta para caber en el teléfono: 176 px de alto y relleno de
+   67 px, que sigue centrando el primer y el último valor (42 px c/u). */
+.fpick-hora { border-top:1px solid var(--border); margin-top:4px; }
+.fpick-con-hora .iosp-wheels { height:176px; }
+.fpick-con-hora .iosp-pad { height:67px; }
+.fpick-con-hora .iosp-nav { padding-top:0; padding-bottom:0; }
+.fpick-con-hora .iosp-arrow { padding:2px 0; }
+.fpick-hora .iosp-col + .iosp-col { margin-left:2px; }
+/* Campo que abre la rueda: se ve como el campo, pero no saca teclado. */
+.rueda-vis { cursor:pointer; caret-color:transparent; }
+.rueda-vis::placeholder { color:var(--text-soft); opacity:.8; }
+
 /* ============================================================
    ENTREGA 4 — BLOQUES 8 A 14
    ============================================================ */

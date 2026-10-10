@@ -229,6 +229,25 @@
         <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-mes" data-d="1" aria-label="Mes abajo">▼</button>
         <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-anio" data-d="1" aria-label="Año abajo">▼</button>
       </div>
+      <!-- 10/10/2026 — fila de HORA (solo cuando el campo la lleva) -->
+      <div id="fpick-hora-box" class="fpick-hora hidden">
+        <div class="iosp-nav iosp-nav--up">
+          <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-h" data-d="-1" aria-label="Hora arriba">▲</button>
+          <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-m" data-d="-1" aria-label="Minuto arriba">▲</button>
+          <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-ap" data-d="-1" aria-label="a. m. o p. m. arriba">▲</button>
+        </div>
+        <div class="iosp-wheels">
+          <div class="iosp-highlight"></div>
+          <div class="iosp-col" id="fpick-h"></div>
+          <div class="iosp-col" id="fpick-m"></div>
+          <div class="iosp-col" id="fpick-ap"></div>
+        </div>
+        <div class="iosp-nav iosp-nav--down">
+          <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-h" data-d="1" aria-label="Hora abajo">▼</button>
+          <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-m" data-d="1" aria-label="Minuto abajo">▼</button>
+          <button type="button" class="iosp-arrow fpick-arrow" data-col="fpick-ap" data-d="1" aria-label="a. m. o p. m. abajo">▼</button>
+        </div>
+      </div>
     </div>
   </div>
 

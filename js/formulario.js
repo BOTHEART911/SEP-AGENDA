@@ -156,7 +156,23 @@ var FORMU = (function () {
      RUEDA DE FECHA iOS — día · mes · AÑO (portada de SEP GROUP y
      hecha genérica: cada campo dice qué años admite).
      ============================================================ */
-  var FP = { onOk: null, dias: [], anios: [], H: 42 };
+  var FP = { onOk: null, dias: [], anios: [], H: 42, hora: false };
+
+  /* 10/10/2026 — HORA:MINUTO EN LA MISMA RUEDA. Cuando el campo lleva
+     hora (citas de la visa), la rueda suma una segunda fila con hora
+     (1–12), minuto (00–59) y a. m./p. m. El valor entra y sale como
+     'dd/mm/aaaa HH:MM' (24 h); sin la opción, todo queda como antes. */
+  var FP_AP = ['a. m.', 'p. m.'];
+  var FP_AP_EN = ['AM', 'PM'];
+  function fpHorasArr_() { var a = []; for (var h = 1; h <= 12; h++) a.push(String(h)); return a; }
+  function fpMinArr_() { var a = []; for (var m = 0; m < 60; m++) a.push(String(m).padStart(2, '0')); return a; }
+  function fpHoraDe_(valor) {
+    var m = /\s(\d{1,2}):(\d{2})\s*$/.exec(txt(valor));
+    if (!m) return null;
+    var h = +m[1], mi = +m[2];
+    if (h > 23 || mi > 59) return null;
+    return { h: h, m: mi };
+  }
 
   function fpBuild_(colEl, items, initIdx, onSettle) {
     colEl.innerHTML = '<div class="iosp-pad"></div>' +
@@ -220,12 +236,20 @@ var FORMU = (function () {
     return a;
   }
 
-  function abrirRueda_(valor, modo, titulo, onOk, en) {
+  function abrirRueda_(valor, modo, titulo, onOk, en, opc) {
     FP.onOk = onOk;
     FP.anios = fpAnios_(modo);
+    FP.hora = !!(opc && opc.hora);
     var tx = RUEDA_TX[en ? 'en' : 'es'];
 
-    var f = fechaValida_(valor);
+    var f = fechaValida_(txt(valor).slice(0, 10));
+    /* Con hora (citas): una fecha guardada fuera del rango de años se
+       respeta en vez de saltar al primer año. Los campos sin hora
+       siguen con su rango exacto, como siempre. */
+    if (FP.hora && f && FP.anios.indexOf(f.getFullYear()) < 0) {
+      FP.anios.push(f.getFullYear());
+      FP.anios.sort(function (a, b) { return a - b; });
+    }
     if (!f) {
       f = (modo === 'futura') ? hoy0_()
         : (modo === 'adulto' || (modo && typeof modo === 'object'))
@@ -240,6 +264,9 @@ var FORMU = (function () {
        para el contrato: se escriben cada vez que se abre. */
     if (q('#fpick-cancel')) q('#fpick-cancel').textContent = tx.cancelar;
     if (q('#fpick-ok')) q('#fpick-ok').textContent = tx.ok;
+    var caja = q('#fpick-hora-box');
+    if (caja) caja.classList.toggle('hidden', !FP.hora);
+    q('#form-picker').classList.toggle('fpick-con-hora', FP.hora);
     q('#form-picker').classList.remove('hidden');
 
     var total = fpDiasMes_(f.getMonth(), FP.anios[anioPos]);
@@ -249,6 +276,15 @@ var FORMU = (function () {
     fpBuild_(q('#fpick-mes'), (en ? MESES_EN : MESES).map(function (m) { return m.charAt(0).toUpperCase() + m.slice(1); }),
              f.getMonth(), fpRehacerDias_);
     fpBuild_(q('#fpick-anio'), FP.anios.map(String), anioPos, fpRehacerDias_);
+
+    if (FP.hora && q('#fpick-h')) {
+      /* Sin hora guardada abre en 8:00 a. m. */
+      var hm = fpHoraDe_(valor) || { h: 8, m: 0 };
+      var h12 = hm.h % 12; if (h12 === 0) h12 = 12;
+      fpBuild_(q('#fpick-h'), fpHorasArr_(), h12 - 1);
+      fpBuild_(q('#fpick-m'), fpMinArr_(), hm.m);
+      fpBuild_(q('#fpick-ap'), en ? FP_AP_EN : FP_AP, hm.h >= 12 ? 1 : 0);
+    }
   }
 
   function cerrarRueda_() { q('#form-picker').classList.add('hidden'); }
@@ -261,9 +297,18 @@ var FORMU = (function () {
       var dia  = FP.dias[Math.min(fpSel_(q('#fpick-dia')), FP.dias.length - 1)];
       var mes  = fpSel_(q('#fpick-mes'));
       var anio = FP.anios[Math.min(fpSel_(q('#fpick-anio')), FP.anios.length - 1)];
-      cerrarRueda_();
       var p = function (n) { return String(n).padStart(2, '0'); };
-      if (FP.onOk) FP.onOk(p(dia) + '/' + p(mes + 1) + '/' + anio);
+      /* La hora se lee ANTES de cerrar: con la rueda oculta scrollTop vale 0. */
+      var hora = '';
+      if (FP.hora && q('#fpick-h')) {
+        var h = Math.min(fpSel_(q('#fpick-h')), 11) + 1;
+        var mi = Math.min(fpSel_(q('#fpick-m')), 59);
+        var pm = fpSel_(q('#fpick-ap')) >= 1;
+        var h24 = (h % 12) + (pm ? 12 : 0);
+        hora = ' ' + p(h24) + ':' + p(mi);
+      }
+      cerrarRueda_();
+      if (FP.onOk) FP.onOk(p(dia) + '/' + p(mes + 1) + '/' + anio + hora);
     });
     Array.prototype.forEach.call(document.querySelectorAll('.fpick-arrow'), function (b) {
       b.addEventListener('click', function () {
@@ -271,7 +316,7 @@ var FORMU = (function () {
         var n = col.querySelectorAll('.iosp-item').length;
         var i = Math.min(Math.max(fpSel_(col) + (+b.dataset.d), 0), n - 1);
         col.scrollTop = i * FP.H; fpMarcar_(col);
-        if (b.dataset.col !== 'fpick-dia') fpRehacerDias_();
+        if (b.dataset.col === 'fpick-mes' || b.dataset.col === 'fpick-anio') fpRehacerDias_();
       });
     });
   }
@@ -1710,10 +1755,12 @@ var FORMU = (function () {
      ya cableada: quien la llame no tiene que acordarse de nada.
        valor  — 'dd/mm/aaaa' o vacío
        modo   — 'pasada' | 'futura' | 'adulto' | {min: año, max: año}
-       onOk   — recibe la fecha elegida como 'dd/mm/aaaa' */
-  function rueda(valor, modo, titulo, onOk, en) {
+       onOk   — recibe la fecha elegida como 'dd/mm/aaaa'
+       opc    — {hora: true} suma hora:minuto (12 h, a. m./p. m.); entonces
+                valor y respuesta van como 'dd/mm/aaaa HH:MM' (24 h). */
+  function rueda(valor, modo, titulo, onOk, en, opc) {
     cablearRueda_();
-    abrirRueda_(valor, modo, titulo, onOk, !!en);
+    abrirRueda_(valor, modo, titulo, onOk, !!en, opc);
   }
 
   return { tarjeta: tarjeta, bind: bind, abrir: abrir, rueda: rueda, _s: S };
