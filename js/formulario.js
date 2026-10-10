@@ -366,7 +366,7 @@ var FORMU = (function () {
      ============================================================ */
   function pintarEsqueleto_() {
     if (window.SEPEsqueleto && typeof window.SEPEsqueleto.pintar === 'function') {
-      return window.SEPEsqueleto.pintar('fm-cont', 'lectura') || function () {};
+      return window.SEPEsqueleto.pintar('fm-cont', 'bloques') || function () {};
     }
     return function () {};
   }

@@ -39,7 +39,7 @@
 
   function pintarEsqueleto() {
     if (window.SEPEsqueleto && typeof window.SEPEsqueleto.pintar === 'function') {
-      return window.SEPEsqueleto.pintar('doc-cont', 'lectura') || function () {};
+      return window.SEPEsqueleto.pintar('doc-cont', 'documentos') || function () {};
     }
     return function () {};
   }

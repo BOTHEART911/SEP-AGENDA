@@ -115,3 +115,13 @@
 .sep-sk-arch { display: flex; align-items: center; gap: 10px; padding: 12px; }
 .sep-sk-arch .sep-sk-ico { flex: none; }
 .sep-sk-arch .sep-sk-l { flex: 1; }
+
+/* 5.5-D (09/10/2026) — siluetas del tablero, de Mis documentos y de la
+   lista de secciones del formulario (forma real de cada pantalla). */
+.sep-sk-tile { margin: 0; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 92px; }
+.sep-sk-aviso { display: block; height: 54px; border-radius: 14px; margin-bottom: 12px; }
+.sep-sk-fila-blq { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.sep-sk-hola { min-height: 128px; padding: 18px; }
+.sep-sk-buscar { display: block; height: 44px; border-radius: 14px; margin: 4px 0 10px; }
+.sep-sk-selects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.sep-sk-selects .sep-sk { height: 40px; border-radius: 12px; }

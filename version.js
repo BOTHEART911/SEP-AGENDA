@@ -128,6 +128,13 @@
  * firma del contrato, acuerdo de firma electrónica, modo oscuro,
  * esqueletos como único efecto de carga y resumen antes de firmar.
  * ------------------------------------------------------------
+ * FASE 5.5 · ENTREGA D (09/10/2026) — SILUETAS CON LA FORMA REAL.
+ *   · Inicio: silueta del tablero del portal (saludo, acciones pendientes,
+ *     accesos rápidos en su rejilla y contacto), no la del inicio viejo.
+ *   · Mis documentos, Formulario y Ofertas: siluetas de su lista real.
+ *   Archivos: js/capa-5-esqueletos.js, css/capa-5-esqueletos.css,
+ *   js/documentos.js, js/formulario.js, js/ofertas.js, version.js.
+ * ------------------------------------------------------------
  * FASE 5.5 · ENTREGA C (08/10/2026): el contrato sin tablas — datos de
  * las partes en ficha, firmas en recuadros y precios por plan en
  * tarjetas (js/contrato.js, css/contrato.css, css/tema-oscuro.css).
@@ -136,4 +143,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.08.04";
+var APP_VERSION = "2026.10.09.01";

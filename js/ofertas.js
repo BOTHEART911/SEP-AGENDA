@@ -62,13 +62,17 @@
   function skCard(inner) { return '<div class="sep-sk-card">' + inner + '</div>'; }
   function skRep(html, n) { var s = ''; for (var i = 0; i < n; i++) s += html; return s; }
 
+  /* 5.5-D — forma real de la lista: aviso de la puerta, buscador, los 5
+     selectores en 2 columnas, la línea del conteo y las ofertas. */
   function siluetaLista() {
     return '<div class="sep-sk-wrap" aria-busy="true" aria-label="Cargando ofertas">' +
-      skCard(sk(45, true) + '<div class="sep-sk-badges">' +
-             skRep('<span class="sep-sk sep-sk-badge"></span>', 3) + '</div>') +
+      skCard('<div class="sep-sk-rows" style="margin-top:0;align-items:center">' + sk(30, true) + sk(80) + sk(60) + '</div>') +
+      '<span class="sep-sk sep-sk-buscar"></span>' +
+      '<div class="sep-sk-selects">' + skRep('<span class="sep-sk"></span>', 5) + '</div>' +
+      '<span class="sep-sk sep-sk-l sep-sk-w45" style="margin:4px 0 12px"></span>' +
       skRep(skCard('<span class="sep-sk sep-sk-media"></span>' +
                    '<div class="sep-sk-rows">' + sk(80, true) + sk(60) + sk(45) + '</div>' +
-                   '<div class="sep-sk-acts"><span class="sep-sk sep-sk-btn"></span></div>'), 3) +
+                   '<div class="sep-sk-acts"><span class="sep-sk sep-sk-btn"></span></div>'), 2) +
       '</div>';
   }
   function siluetaFicha() {

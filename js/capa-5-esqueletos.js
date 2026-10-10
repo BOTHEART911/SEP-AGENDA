@@ -54,15 +54,17 @@
 
   /* accion -> qué silueta y en qué vista */
   var LECTURAS = {
-    loginEstudiante:    { destino: 'home-content', forma: 'inicio', vista: 'home', vuelveA: 'login' },
-    agendarEstudiante:  { destino: 'home-content', forma: 'inicio' },
-    cancelarEstudiante: { destino: 'home-content', forma: 'inicio' },
+    /* 5.5-D — el inicio de hoy es el tablero del portal (js/portal.js):
+       saludo, acciones pendientes, tarjetas, accesos rápidos y contacto. */
+    loginEstudiante:    { destino: 'home-content', forma: 'portal', vista: 'home', vuelveA: 'login' },
+    agendarEstudiante:  { destino: 'home-content', forma: 'portal' },
+    cancelarEstudiante: { destino: 'home-content', forma: 'portal' },
     slotsEstudiante:    { rueda: true }
   };
 
   /* ---- Piezas ----------------------------------------------------------- */
   function l(w, tit) { return '<span class="sep-sk sep-sk-l' + (tit ? ' tit' : '') + ' sep-sk-w' + w + '"></span>'; }
-  function card(inner) { return '<div class="sep-sk-card">' + inner + '</div>'; }
+  function card(inner, extra) { return '<div class="sep-sk-card' + (extra ? ' ' + extra : '') + '">' + inner + '</div>'; }
   function rep(html, n) { var s = ''; for (var i = 0; i < n; i++) s += html; return s; }
 
   /* Silueta del inicio: saludo + programa + contrato + asesoría + seguimiento.
@@ -78,6 +80,43 @@
            '<div class="sep-sk-acts">' + rep('<span class="sep-sk sep-sk-btn"></span>', 2) + '</div>') +
       card(l(60, true) + '<div class="sep-sk-rows">' + l(95) + l(80) + l(45) + '</div>') +
       '</div>';
+  }
+
+  /* 5.5-D — silueta del TABLERO del portal (forma real de PORTAL.render):
+     saludo + estado, acciones pendientes, tarjeta de contrato/formulario,
+     accesos rápidos en rejilla (2/3 columnas) y contacto con el asesor. */
+  function siluetaPortal() {
+    var fila = '<div class="sep-sk-top" style="margin-top:12px"><span class="sep-sk sep-sk-ico"></span>' +
+      '<span class="sep-sk-id">' + l(60, true) + l(80) + '</span></div>';
+    var kv = '<div class="sep-sk-top" style="margin-top:12px">' + l(30) + '<span style="flex:1"></span>' + l(45, true) + '</div>';
+    var tile = '<div class="sep-sk-card sep-sk-tile">' + '<span class="sep-sk sep-sk-ico"></span>' + l(80, true) + l(45) + '</div>';
+    return '<div class="sep-sk-wrap" aria-busy="true" aria-label="Cargando">' +
+      card('<div class="sep-sk-rows" style="margin-top:4px">' + l(30) + l(80, true) + l(60, true) + '</div>' +
+           '<div class="sep-sk-badges"><span class="sep-sk sep-sk-badge"></span></div>', 'sep-sk-hola') +
+      card(l(45, true) + fila) +
+      card(l(45, true) + '<div class="pt-grid" style="margin-top:12px">' + rep(tile, 4) + '</div>') +
+      card(l(45, true) + rep(kv, 4) + '<div class="sep-sk-acts"><span class="sep-sk sep-sk-btn"></span></div>') +
+      '</div>';
+  }
+
+  /* 5.5-D — Mis documentos: aviso + una tarjeta por documento (ícono,
+     nombre, ayuda, estado y botones). */
+  function siluetaDocumentos() {
+    var doc = card('<div class="sep-sk-top"><span class="sep-sk sep-sk-ico"></span><span class="sep-sk-id">' +
+      l(60, true) + l(80) + '<span class="sep-sk sep-sk-badge" style="width:96px;height:20px"></span></span></div>' +
+      '<div class="sep-sk-acts">' + rep('<span class="sep-sk sep-sk-btn"></span>', 2) + '</div>');
+    return '<div class="sep-sk-wrap" aria-busy="true" aria-label="Cargando">' +
+      '<span class="sep-sk sep-sk-aviso"></span>' + rep(doc, 5) + '</div>';
+  }
+
+  /* 5.5-D — lista de secciones del formulario (fm-item: ícono, título,
+     fecha/estado y la pastilla a la derecha). */
+  function siluetaBloques() {
+    var it = '<div class="sep-sk-card sep-sk-fila-blq"><span class="sep-sk sep-sk-ico"></span>' +
+      '<span class="sep-sk-id">' + l(80, true) + l(60) + l(45) + '</span>' +
+      '<span class="sep-sk sep-sk-badge" style="width:86px;height:22px"></span></div>';
+    return '<div class="sep-sk-wrap" aria-busy="true" aria-label="Cargando">' +
+      card(l(60, true) + '<div class="sep-sk-rows">' + l(95) + l(80) + '</div><div style="margin-top:14px">' + rep(it, 7) + '</div>') + '</div>';
   }
 
   /* Silueta de la lectura del contrato (la usa contrato.js). */
@@ -96,7 +135,8 @@
       '</div>';
   }
 
-  var FORMAS = { inicio: siluetaInicio, lectura: siluetaLectura, rueda: siluetaRueda };
+  var FORMAS = { inicio: siluetaInicio, portal: siluetaPortal, documentos: siluetaDocumentos,
+                 bloques: siluetaBloques, lectura: siluetaLectura, rueda: siluetaRueda };
 
   function pintar(idContenedor, forma) {
     var cont = document.getElementById(idContenedor);
@@ -200,7 +240,7 @@
   try {
     var ses = JSON.parse(localStorage.getItem(CLAVE_SESION) || 'null');
     if (ses && ses.clave && typeof window.showView === 'function') {
-      pintar('home-content', 'inicio');
+      pintar('home-content', 'portal');   // 5.5-D
       window.showView('home');
     }
   } catch (e) { /* sin sesión guardada o almacenamiento bloqueado: nada que hacer */ }
