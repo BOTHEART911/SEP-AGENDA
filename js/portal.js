@@ -90,7 +90,7 @@
   function bloqueAccesos(p, e) {
     /* "Agendar asesoría" y "Firmar contrato" ya viven en sus propias
        tarjetas grandes; en la rejilla van los módulos de consulta. */
-    var enRejilla = ['PERFIL', 'DOCUMENTOS', 'OFERTAS', 'VISA', 'PAGOS', 'SEGUIMIENTO', 'MI_CONTRATO'];
+    var enRejilla = ['PERFIL', 'DOCUMENTOS', 'OFERTAS', 'VISA', 'PAGOS', 'SEGUIMIENTO', 'MI_CONTRATO', 'RECURSOS'];
     var docs = (p && p.documentos) || {};
 
     var tiles = enRejilla.map(function (clave) {
@@ -269,6 +269,7 @@
       case 'pagos':       return abrirPagos(e);
       case 'seguimiento': return abrirSeguimiento(e);
       case 'miContrato':  return abrirMiContrato(e);
+      case 'recursos':    return abrirRecursos(e);       /* Ajustes Fase 5 */
     }
   }
 
@@ -400,6 +401,70 @@
     showView('portal');
   }
 
+  /* ============================================================
+     RECURSOS (Ajustes Fase 5 · 09/10/2026)
+     ============================================================
+     Videos e información que publica SEP. Llegan en el tablero
+     (EST.portal.recursos), en el mismo viaje del login: abrir esta
+     vista no pide nada al servidor. Del video llega SOLO el ID; la
+     miniatura y el reproductor salen directo de YouTube, y el
+     reproductor se monta cuando el participante toca el video (así la
+     vista abre al instante aunque haya muchos). */
+  function abrirRecursos(e) {
+    var p = portal(e);
+    var lista = (p && p.recursos) || [];
+    q('#pt-sub').textContent = 'Recursos';
+    q('#pt-title').textContent = 'Recursos';
+    var html;
+    if (!lista.length) {
+      html = '<div class="card"><p class="muted center" style="padding:10px 0">' +
+             'Todavía no hay recursos publicados. Aquí vas a encontrar videos e información útil para tu proceso.</p></div>';
+    } else {
+      html = '<div class="card rc-intro"><h2><span class="em">🎬</span> Recursos para tu proceso</h2>' +
+        '<p class="muted" style="margin:-6px 0 0">Videos e información que preparamos para acompañarte en cada paso.</p></div>' +
+        '<div class="rc-lista">' + lista.map(function (r) {
+          var vid = /^[\w-]{11}$/.test(String(r.v || '')) ? r.v : '';
+          return '' +
+            '<article class="rc-card">' +
+            (vid
+              ? '<div class="rc-video" data-yt="' + esc(vid) + '">' +
+                '  <button class="rc-play" type="button" aria-label="Ver el video: ' + esc(r.t) + '">' +
+                '    <img src="https://i.ytimg.com/vi/' + esc(vid) + '/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer">' +
+                '    <span class="rc-play-ic" aria-hidden="true">▶</span>' +
+                '  </button>' +
+                '</div>'
+              : '') +
+            '  <div class="rc-cuerpo">' +
+            '    <h3>' + esc(r.t) + '</h3>' +
+            (r.d ? '    <p>' + esc(r.d) + '</p>' : '') +
+            '  </div>' +
+            '</article>';
+        }).join('') + '</div>';
+    }
+    q('#pt-cont').innerHTML = html;
+    qq('#pt-cont .rc-video').forEach(function (caja) {
+      caja.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
+      var b = caja.querySelector('.rc-play');
+      if (b) b.addEventListener('click', function () { montarVideoRecurso(caja); });
+    });
+    S.vista = 'recursos';
+    showView('portal');
+  }
+  /* youtube-nocookie, sin relacionados de otros canales; arranca solo
+     porque el participante ya tocó "reproducir". */
+  function montarVideoRecurso(caja) {
+    var id = caja.getAttribute('data-yt');
+    if (!/^[\w-]{11}$/.test(id)) return;
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&autoplay=1';
+    f.title = 'Video del recurso';
+    f.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen');
+    f.setAttribute('allowfullscreen', '');
+    f.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+    caja.innerHTML = '';
+    caja.appendChild(f);
+  }
+
   /* Salida de la vista genérica del portal. */
   var salir = document.getElementById('pt-salir');
   if (salir) salir.addEventListener('click', function () { showView('home'); });
@@ -408,6 +473,6 @@
     render: render, bind: bind, ir: ir,
     /* Puertas para las pruebas automatizadas. */
     _pend: bloquePendientes, _acc: bloqueAccesos, _pago: tarjetaPago, _estado: S,
-    _miContrato: abrirMiContrato
+    _miContrato: abrirMiContrato, _recursos: abrirRecursos
   };
 })();

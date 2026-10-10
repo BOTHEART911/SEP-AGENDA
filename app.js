@@ -70,7 +70,8 @@ async function apiGet(action, params = {}){
      cambia nada. Nunca hay reintentos ciegos de una escritura. */
 function ridNuevo_(){ return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
 async function apiPost(action, body = {}, opts = {}){
-  startLoading();
+  /* AJUSTES FASE 5 — opts.fondo: lectura de fondo, sin aviso de carga. */
+  if (!opts.fondo) startLoading();
   try{
     const url = API_BASE + '?action=' + encodeURIComponent(action);
     const datos = opts.escritura ? Object.assign({}, body, { rid: body.rid || ridNuevo_() }) : body;
@@ -89,7 +90,7 @@ async function apiPost(action, body = {}, opts = {}){
     }
     if (!j.ok) throw new Error(j.error || 'Error');
     return j.data;
-  } finally { stopLoading(); }
+  } finally { if (!opts.fondo) stopLoading(); }
 }
 
 /* ================== SESIÓN ================== */
@@ -100,8 +101,39 @@ function leerSesion_(){ try{ const s = localStorage.getItem(SESSION_KEY); return
 function borrarSesion_(){ try{ localStorage.removeItem(SESSION_KEY); }catch(_){} }
 function cred_(){ const s = leerSesion_() || {}; return { clave: s.clave || '' }; }
 
+/* ================== TABLERO AL DÍA (Ajustes Fase 5 · 09/10/2026) ==================
+   Medido con el rechazo real del 09/10: el portal solo traía el tablero al
+   entrar, así que un documento rechazado (o cualquier cambio que haga SEP)
+   no aparecía como acción pendiente hasta cerrar y volver a abrir la app.
+   Ahora, cuando el participante VUELVE a la app (pestaña o app al frente)
+   o regresa al inicio desde un módulo, y el tablero tiene más de 45 s, se
+   pide de fondo (portalInicio, ~6 KB) y se repinta el inicio. Sin relojes:
+   solo cuando la persona vuelve. Una respuesta de otra sesión no pisa la
+   actual, y nunca hay dos pedidas a la vez. */
+let PORTAL_T = 0, PORTAL_PIDIENDO = false;
+const PORTAL_FRESCO_MS = 45000;
+async function portalRefrescar_(){
+  if (!EST || PORTAL_PIDIENDO || document.hidden) return;
+  if (Date.now() - PORTAL_T < PORTAL_FRESCO_MS) return;
+  const clave = cred_().clave;
+  if (!clave) return;
+  PORTAL_PIDIENDO = true;
+  const t0 = performance.now();
+  try {
+    const p = await apiPost('portalInicio', { clave }, { fondo: true });
+    if (!EST || cred_().clave !== clave || !p) return;          // otra sesión: no se pisa
+    EST.portal = p;
+    PORTAL_T = Date.now();
+    medAnotarFront_('portalRefrescar', performance.now() - t0, 0, '');
+    const home = document.getElementById('view-home');
+    if (home && home.classList.contains('active')) renderHome_();
+  } catch (_) { /* sin red: queda lo que había */ }
+  finally { PORTAL_PIDIENDO = false; }
+}
+
 /* ================== VISTAS ================== */
 function showView(id){
+  if (id === 'home') setTimeout(portalRefrescar_, 0);
   $$('.view').forEach(el => el.classList.remove('active'));
   ($('#view-' + id) || document.getElementById(id))?.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'auto' });
@@ -147,6 +179,7 @@ document.addEventListener('click', function (e) {
 async function hacerLogin_(clave, silencioso){
   const data = await apiPost('loginEstudiante', { clave });
   EST = data;
+  PORTAL_T = Date.now();
   guardarSesion_({ clave: clave });
   renderHome_();
   showView('home');
@@ -467,7 +500,7 @@ async function checkVersion(){
  * ARRANQUE
  * ============================================================ */
 window.addEventListener('load', initApp_);
-document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) checkVersion(); });
+document.addEventListener('visibilitychange', ()=>{ if (!document.hidden) { checkVersion(); portalRefrescar_(); } });
 setInterval(checkVersion, 60000);
 
 async function initApp_(){

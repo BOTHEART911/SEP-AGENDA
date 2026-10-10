@@ -9,6 +9,15 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * AJUSTES FASE 5 · NOTAS DE JAVIER (09/10/2026).
+ *   · Tarjeta RECURSOS en el portal: videos e información que publica
+ *     SEP (llegan en el mismo viaje del login; el video se monta al
+ *     tocarlo, directo de YouTube).
+ *   · El tablero se pone al día solo cuando vuelves a la app o regresas
+ *     al inicio (un documento rechazado aparece como acción pendiente
+ *     sin cerrar sesión). Sin relojes.
+ *   Archivos: app.js, js/portal.js, styles.css, version.js.
+ * ------------------------------------------------------------
  * PRE-ARRIVAL Y VUELO (08/10/2026 · Fase 5.3-B).
  *   · Con la visa aprobada, el módulo Visa muestra el Pre-Arrival
  *     (video + confirmación) y el mensaje de la rifa: si cargas tu
@@ -143,4 +152,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.09.01";
+var APP_VERSION = "2026.10.09.02";
