@@ -29,6 +29,9 @@
   <link rel="stylesheet" href="css/visa.css">
   <!-- MODO OSCURO (11/08) — va SIEMPRE la última, después de las capas -->
   <link rel="stylesheet" href="css/tema-oscuro.css">
+  <!-- 10/10/2026 — avión (pieza única con SEP-GROUP) y ancho de pantalla: los últimos -->
+  <link rel="stylesheet" href="css/avion.css">
+  <link rel="stylesheet" href="css/ancho.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -54,11 +57,6 @@
 <body>
 
   <!-- LOADER -->
-  <div id="loader" class="loader hidden">
-    <div class="spinner">
-      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-    </div>
-  </div>
 
   <!-- ============================ LOGIN ============================ -->
   <section id="view-login" class="view active">
@@ -256,27 +254,9 @@
     </div>
   </div>
 
-  <!-- ====== CREACIÓN DEL CONTRATO (ajuste 4 · 11/08) ======
-       Único efecto de carga distinto del esqueleto en toda la web: mientras
-       el backend copia la plantilla, mete las firmas y genera el PDF (es la
-       llamada más larga de la app) el estudiante NO puede quedarse mirando
-       una pantalla quieta ni salirse. -->
-  <div id="ctr-load" class="ctrload hidden" role="alertdialog" aria-live="assertive" aria-modal="true">
-    <div class="ctrload-card">
-      <div class="ctrload-cielo">
-        <span class="ctrload-avion">✈️</span>
-        <i class="ctrload-nube n1"></i><i class="ctrload-nube n2"></i><i class="ctrload-nube n3"></i>
-      </div>
-      <div class="ctrload-t" id="ctr-load-t">Tu contrato se está creando</div>
-      <div class="ctrload-p" id="ctr-load-p">
-        Por favor no salgas de esta vista antes de finalizar ✈️🤩
-      </div>
-      <div class="ctrload-pista"><i id="ctr-load-bar"></i></div>
-      <div class="ctrload-paso" id="ctr-load-paso">Preparando tu documento…</div>
-    </div>
-  </div>
-
   <script src="version.js"></script>
+  <!-- 10/10/2026 — avión de escritura: pieza única con SEP-GROUP -->
+  <script src="js/avion.js"></script>
   <script src="app.js"></script>
   <script src="js/contrato.js"></script>
   <script src="js/formulario.js"></script>

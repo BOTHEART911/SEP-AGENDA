@@ -1550,7 +1550,7 @@ var FORMU = (function () {
          teléfono lento dos toques seguidos entraban los dos.
        · Los botones del pie se apagan durante todo el trámite, incluido
          el rato en que el Swal está abierto.
-       · El aviso es el MISMO del contrato (#ctr-load, el del avión):
+       · El aviso es el MISMO del contrato (SEPAvion, el del avión):
          se reutiliza desde CONTRATO, no se inventa otro.
      ============================================================ */
 

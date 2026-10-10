@@ -1,0 +1,62 @@
+/* ============================================================================
+ * ZONA DE ESTUDIANTES · ANCHO DE PANTALLA (10/10/2026)
+ * ----------------------------------------------------------------------------
+ * © Oscar Polanía — Experto en Soluciones Digitales · +57 310 323 0712
+ * Software propietario; cualquier modificación por terceros anula la garantía.
+ * ----------------------------------------------------------------------------
+ * Igual que en SEP-GROUP: en monitores grandes las tarjetas no se estiran ni
+ * dejan los lados vacíos; se agregan columnas del MISMO tamaño que se ve en
+ * un portátil (~500 px).
+ *     < 900 → 1 columna (teléfono, sin cambios)
+ *     900 → 2 (como hoy) · 1560 → 3 · 2040 → 4 · 2520 → 5
+ * Dónde: el inicio (tarjetas del tablero), Ofertas, Mis documentos y
+ * Recursos. El contrato, el formulario y los módulos de pasos de "Mi
+ * proceso" (visa, pagos) se quedan en 1040 px: renglones cómodos de leer
+ * (antes "Mi proceso" y "Mis documentos" eran una tira de 560 px).
+ * La barra de arriba acompaña el ancho del contenido.
+ * Va el ÚLTIMO de los estilos.
+ * ========================================================================== */
+
+:root { --anc-n: 1; --anc-max: 560px; }
+@media (min-width: 900px)  { :root { --anc-n: 2; --anc-max: 1040px; } }
+@media (min-width: 1560px) { :root { --anc-n: 3; --anc-max: 1600px; } }
+@media (min-width: 2040px) { :root { --anc-n: 4; --anc-max: 2120px; } }
+@media (min-width: 2520px) { :root { --anc-n: 5; --anc-max: 2640px; } }
+
+.view { --anc-vista: var(--container-max, 560px); }
+@media (min-width: 900px) {
+  #view-home, #view-ofertas, #view-documentos { --anc-vista: var(--anc-max); }
+  /* "Mi proceso" muestra varios módulos: los de pasos (visa, pagos) se
+     leen mejor a 1040 px; Recursos, que son tarjetas, toma el ancho. */
+  #view-contrato, #view-formulario, #view-portal { --anc-vista: 1040px; }
+  #view-portal:has(.rc-lista) { --anc-vista: var(--anc-max); }
+
+  #view-home .container, #view-ofertas .container,
+  #view-documentos .container, #view-portal .container,
+  #view-contrato .container, #view-formulario .container { max-width: var(--anc-vista); }
+
+  /* La barra de arriba: fondo de lado a lado, contenido alineado. */
+  .view > .topbar {
+    padding-left:  calc(max(0px, (100% - var(--anc-vista)) / 2) + 16px);
+    padding-right: calc(max(0px, (100% - var(--anc-vista)) / 2) + 16px);
+  }
+
+  /* Inicio: tarjetas del tablero (el saludo y el pie siguen a lo ancho). */
+  #home-content,
+  #home-content > .sep-sk-wrap { grid-template-columns: repeat(var(--anc-n), minmax(0, 1fr)); }
+
+  /* Ofertas: la lista de ofertas. */
+  .ofe-lista { grid-template-columns: repeat(var(--anc-n), minmax(0, 1fr)); }
+
+  /* Mis documentos: una tarjeta por documento; el aviso de arriba, a lo ancho. */
+  #doc-cont { display: grid; grid-template-columns: repeat(var(--anc-n), minmax(0, 1fr)); gap: 0 16px; align-items: start; }
+  #doc-cont > :not(.doc-item) { grid-column: 1 / -1; }
+
+  /* Recursos: tarjetas con video. */
+  .rc-lista { grid-template-columns: repeat(var(--anc-n), minmax(0, 1fr)); }
+}
+
+/* Visor de archivos (contrato, documentos, visa): más grande en monitores
+   grandes; en el teléfono no cambia. */
+@media (min-width: 1560px) { .ctr-visor-card { max-width: 1280px; } }
+@media (min-width: 2040px) { .ctr-visor-card { max-width: 1500px; } }

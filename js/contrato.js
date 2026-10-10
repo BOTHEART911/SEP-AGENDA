@@ -21,7 +21,7 @@
  *
  * LOTE 17/08/2026: la fecha de nacimiento ya no abre el calendario
  * del navegador sino la RUEDA manejada (FORMU.rueda), y el aviso del
- * avión (#ctr-load) se expone en CONTRATO.cargando para que el
+ * avión (SEPAvion, js/avion.js) se expone en CONTRATO.cargando para que el
  * formulario lo use al guardar cada bloque.
  *
  * Usa lo que ya existe en app.js: apiPost, cred_, escapeHtml_,
@@ -810,11 +810,6 @@ var CONTRATO = (function () {
      no vale un esqueleto: hay que retener al estudiante en la pantalla y
      decirle que no se salga.
      Es la ÚNICA excepción a "el esqueleto es el único efecto de carga". */
-  var CREANDO = { t: null, pct: 0, guard: null };
-  /* Los pasos que se están mostrando ahora mismo (los del contrato o los
-     que le pasó el formulario). */
-  var ABIERTO = { pasos: null };
-
   var PASOS = [
     'Preparando tu documento…',
     'Colocando tus datos en el contrato…',
@@ -824,76 +819,40 @@ var CONTRATO = (function () {
     'Ya casi, no cierres esta ventana…'
   ];
 
-  /* LOTE 17/08 — el texto del aviso de "no te salgas" también es
-     variable: el formulario dice bloque, no contrato. */
-  var SALIR_MSJ = 'Tu contrato se está creando. Si sales ahora, no quedará firmado.';
-
-  function noSalir(ev) {
-    ev.preventDefault();
-    ev.returnValue = SALIR_MSJ;
-    return ev.returnValue;
-  }
-
   /* LOTE 17/08 — el mismo aviso lo usa ahora el formulario al guardar un
      bloque (FORMU llama a CONTRATO.cargando.abrir). Por eso los textos
      y los pasos entran por parámetro; sin parámetros se comporta
      exactamente como antes, que es como lo usa el contrato. */
+  /* 10/10/2026 — PIEZA ÚNICA. El aviso del avión ya no vive aquí: es
+     js/avion.js (SEPAvion), el mismo de SEP-GROUP, con el efecto de
+     CONTRATISTA-FLANDES. Estas tres funciones solo le pasan los textos
+     de siempre, así contrato, formulario, documentos y visa no cambian
+     su forma de llamarlo (CONTRATO.cargando.abrir/listo/cerrar). */
   function abrirCreando(op) {
     op = op || {};
-    var pasos = (op.pasos && op.pasos.length) ? op.pasos : PASOS;
-    ABIERTO.pasos = pasos;
-    SALIR_MSJ = op.salir || 'Tu contrato se está creando. Si sales ahora, no quedará firmado.';
-    var caja = q('#ctr-load');
-    if (!caja) return;
-    caja.classList.remove('hidden');
-    caja.classList.remove('listo');
-    q('#ctr-load-t').textContent = op.titulo || 'Tu contrato se está creando';
-    q('#ctr-load-p').innerHTML = op.sub || 'Por favor <b>no salgas de esta vista</b> antes de finalizar ✈️🤩';
-    q('#ctr-load-paso').textContent = pasos[0];
-
-    /* La barra avanza sola y se va frenando: nunca llega al 100 % hasta que
-       el servidor responde, así no promete un final que no controla. */
-    CREANDO.pct = 0;
-    var paso = 0;
-    q('#ctr-load-bar').style.width = '0%';
-    CREANDO.t = setInterval(function () {
-      CREANDO.pct += Math.max(0.4, (92 - CREANDO.pct) / 22);
-      if (CREANDO.pct > 92) CREANDO.pct = 92;
-      q('#ctr-load-bar').style.width = CREANDO.pct.toFixed(1) + '%';
-      var lista = ABIERTO.pasos || PASOS;
-      var quiero = Math.min(lista.length - 1, Math.floor(CREANDO.pct / (92 / lista.length)));
-      if (quiero !== paso) { paso = quiero; q('#ctr-load-paso').textContent = lista[paso]; }
-    }, 260);
-
-    CREANDO.guard = noSalir;
-    window.addEventListener('beforeunload', CREANDO.guard);
-  }
-
-  function pararCreando() {
-    if (CREANDO.t) { clearInterval(CREANDO.t); CREANDO.t = null; }
-    if (CREANDO.guard) { window.removeEventListener('beforeunload', CREANDO.guard); CREANDO.guard = null; }
+    if (typeof SEPAvion === 'undefined') return;
+    SEPAvion.abrir({
+      titulo: op.titulo || 'Tu contrato se está creando',
+      sub: op.sub || 'Por favor <b>no salgas de esta vista</b> antes de finalizar ✈️🤩',
+      pasos: (op.pasos && op.pasos.length) ? op.pasos : PASOS,
+      noSalir: op.salir || 'Tu contrato se está creando. Si sales ahora, no quedará firmado.'
+    });
   }
 
   function cerrarCreando() {
-    pararCreando();
-    var caja = q('#ctr-load');
-    if (caja) { caja.classList.add('hidden'); caja.classList.remove('listo'); }
+    if (typeof SEPAvion !== 'undefined') SEPAvion.cerrar();
   }
 
   /* Aviso de que YA ESTÁ: la misma ventana cambia a verde antes de dar paso
      a la pantalla del contrato firmado. */
   function creandoListo(op) {
     op = op || {};
-    return new Promise(function (res) {
-      pararCreando();
-      var caja = q('#ctr-load');
-      if (!caja || caja.classList.contains('hidden')) return res();
-      caja.classList.add('listo');
-      q('#ctr-load-bar').style.width = '100%';
-      q('#ctr-load-t').textContent = op.titulo || '¡Listo! Tu contrato ya está creado';
-      q('#ctr-load-p').innerHTML = op.sub || 'Te enviamos una copia en PDF a tu correo 🎉';
-      q('#ctr-load-paso').textContent = op.paso || 'Firmado correctamente ✅';
-      setTimeout(function () { cerrarCreando(); res(); }, op.espera || 1900);
+    if (typeof SEPAvion === 'undefined') return Promise.resolve();
+    return SEPAvion.listo({
+      titulo: op.titulo || '¡Listo! Tu contrato ya está creado',
+      sub: op.sub || 'Te enviamos una copia en PDF a tu correo 🎉',
+      paso: op.paso || 'Firmado correctamente ✅',
+      espera: op.espera || 1900
     });
   }
 

@@ -18,11 +18,20 @@ const LOGO_DEFAULT = 'https://botheart911.github.io/SEP-GROUP/img/sep_logo.png';
 const $  = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
-/* ================== LOADER ================== */
-const loader = $('#loader');
-let loadingCount = 0, loaderTimer = null;
-function startLoading(){ loadingCount++; if (loadingCount === 1){ loaderTimer = setTimeout(()=>{ loader.classList.remove('hidden'); loaderTimer = null; }, 120); } }
-function stopLoading(){ if (loadingCount === 0) return; loadingCount--; if (loadingCount === 0){ if (loaderTimer){ clearTimeout(loaderTimer); loaderTimer = null; } loader.classList.add('hidden'); } }
+/* ================== ESPERAS (10/10/2026) ==================
+   Sin girador. Lecturas → esqueleto (capa 5). Escrituras → el avión
+   (js/avion.js, pieza única con SEP-GROUP). Las acciones de esta lista
+   son las que ESCRIBEN (o generan un documento): llevan avión y su rid.
+   Las que ya abren el avión a mano (contrato, formulario, documentos,
+   visa) no lo duplican: la pieza las deja en manos de quien lo abrió. */
+const ESCRITURAS = {
+  agendarEstudiante: 'Agendando tu asesoría…', cancelarEstudiante: 'Cancelando tu asesoría…',
+  contratoArchivo: 'Subiendo tu documento…', firmarContrato: 'Firmando tu contrato…',
+  subirDocumento: 'Subiendo tu documento…', formArchivo: 'Subiendo tu documento…',
+  guardarBloque: 'Guardando tu información…', visaPaso: 'Guardando tu avance…',
+  seleccionarOferta: 'Enviando tu elección…', confirmarOferta: 'Confirmando la oferta…',
+  rechazarOferta: 'Enviando tu respuesta…', ofertaPdfEstudiante: 'Generando el PDF…'
+};
 
 /* ================== API (text/plain evita preflight CORS) ================== */
 /* 07/10/2026 — RESPUESTA COMPRIMIDA Y MEDICIÓN (igual que SEP-GROUP).
@@ -44,7 +53,6 @@ async function apiAbrirGz_(b64){
   return JSON.parse(await new Response(flujo).text());
 }
 async function apiGet(action, params = {}){
-  startLoading();
   const t0 = performance.now();
   try{
     const url = new URL(API_BASE);
@@ -59,7 +67,7 @@ async function apiGet(action, params = {}){
     medAnotarFront_(action, performance.now() - t0, txt.length / 1024, j && j.ok === false ? 'error' : '');
     if (!j.ok) throw new Error(j.error || 'Error');
     return j.data;
-  } finally { stopLoading(); }
+  } finally { /* lectura: sin girador */ }
 }
 /* FASE 5.1-C (07/10/2026) — un solo reintento seguro.
    · Las ESCRITURAS (opts.escritura) viajan con un id de petición (rid):
@@ -70,11 +78,18 @@ async function apiGet(action, params = {}){
      cambia nada. Nunca hay reintentos ciegos de una escritura. */
 function ridNuevo_(){ return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
 async function apiPost(action, body = {}, opts = {}){
-  /* AJUSTES FASE 5 — opts.fondo: lectura de fondo, sin aviso de carga. */
-  if (!opts.fondo) startLoading();
+  /* AJUSTES FASE 5 — opts.fondo: lectura de fondo, sin aviso de carga.
+     10/10/2026 — toda acción de ESCRITURAS es escritura: avión + rid
+     (antes solo visaPaso pedía rid, y además la capa 5 se tragaba las
+     opciones, así que en la práctica ninguna escritura llevaba rid). */
+  const escribe = !!(opts.escritura || ESCRITURAS[action]);
+  const avion = (escribe && !opts.fondo && !opts.silent && typeof SEPAvion !== 'undefined')
+    ? SEPAvion.tomar(Object.assign({ auto: !opts.avion, titulo: ESCRITURAS[action] || 'Guardando…' }, opts.avion || {}))
+    : null;
+  let bien = false;
   try{
     const url = API_BASE + '?action=' + encodeURIComponent(action);
-    const datos = opts.escritura ? Object.assign({}, body, { rid: body.rid || ridNuevo_() }) : body;
+    const datos = escribe ? Object.assign({}, body, { rid: body.rid || ridNuevo_() }) : body;
     const enviar = async () => {
       const r = await fetch(url, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(datos) });
       if (r.status === 404) { const e = new Error('echo404'); e.reintentar = true; throw e; }
@@ -89,8 +104,9 @@ async function apiPost(action, body = {}, opts = {}){
       catch (_) { throw new Error('No se pudo conectar con el servidor. Revisa tu conexión e intenta de nuevo.'); }
     }
     if (!j.ok) throw new Error(j.error || 'Error');
+    bien = true;
     return j.data;
-  } finally { if (!opts.fondo) stopLoading(); }
+  } finally { if (avion) SEPAvion.soltar(avion, bien); }
 }
 
 /* ================== SESIÓN ================== */

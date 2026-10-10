@@ -242,10 +242,6 @@ html[data-tema="oscuro"] .sep-sk {
 }
 
 /* ── 10. Loader de creación del contrato ───────────────────── */
-html[data-tema="oscuro"] .ctrload { background: rgba(4, 8, 13, .88); }
-html[data-tema="oscuro"] .ctrload-card { background: var(--bg-card); border-color: var(--border); }
-html[data-tema="oscuro"] .ctrload-t { color: var(--titulo); }
-html[data-tema="oscuro"] .ctrload-pista { background: rgba(255, 255, 255, .10); }
 
 /* ── 11. SweetAlert2 (viene de CDN) ────────────────────────── */
 html[data-tema="oscuro"] .swal2-popup {

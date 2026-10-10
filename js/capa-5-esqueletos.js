@@ -200,7 +200,9 @@
     window[nombre] = function (accion, cuerpo, opts) {
       var conf = LECTURAS[accion];
       var callado = !!(opts && opts.silent);
-      if (!conf || callado) return original.call(this, accion, cuerpo);
+      /* 10/10/2026 — se pasan las opciones (antes se perdían: el rid de
+         las escrituras y opts.fondo no llegaban a app.js). */
+      if (!conf || callado) return original.call(this, accion, cuerpo, opts);
 
       var vistaPrevia = null, retirar = null;
 
@@ -224,7 +226,7 @@
       }
 
       var p;
-      try { p = original.call(this, accion, cuerpo); }
+      try { p = original.call(this, accion, cuerpo, opts); }
       catch (e) { fin(true); throw e; }
 
       return p.then(

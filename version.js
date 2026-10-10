@@ -9,6 +9,21 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * ANCHO DE PANTALLA Y AVIÓN DE ESCRITURA (10/10/2026).
+ *   · Monitores grandes: el inicio, Ofertas, Mis documentos y Recursos
+ *     suman columnas del mismo tamaño (3 a 1560 px, 4 a 2040, 5 a 2520);
+ *     la barra de arriba va al ancho del contenido. "Mi proceso" y "Mis
+ *     documentos" dejan de ser una tira de 560 px. Teléfono sin cambios.
+ *   · El avión (#ctr-load) pasa a ser la pieza única js/avion.js +
+ *     css/avion.css, la misma de SEP-GROUP con el efecto de
+ *     CONTRATISTA-FLANDES. CONTRATO.cargando sigue igual por fuera.
+ *     Toda escritura abre el avión y viaja con su rid (antes la capa 5 se
+ *     tragaba las opciones y ninguna escritura llevaba rid).
+ *   Archivos: index.html, app.js, js/avion.js (nuevo), css/avion.css
+ *   (nuevo), css/ancho.css (nuevo), js/contrato.js, js/formulario.js,
+ *   js/capa-5-esqueletos.js, css/contrato.css, css/tema-oscuro.css,
+ *   version.js.
+ * ------------------------------------------------------------
  * AJUSTES FASE 5 · NOTAS DE JAVIER (09/10/2026).
  *   · Tarjeta RECURSOS en el portal: videos e información que publica
  *     SEP (llegan en el mismo viaje del login; el video se monta al
@@ -152,4 +167,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.09.02";
+var APP_VERSION = "2026.10.10.01";
