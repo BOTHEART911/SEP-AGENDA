@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * FECHA Y HORA DE LA OFERTA (10/10/2026 · 2).
+ *   · "Tu oferta de empleo" y el detalle ya no muestran el texto crudo
+ *     del Date ("Wed Sep 16 2026 00:00:00 GMT-0500…"): el backend manda
+ *     "16 de septiembre de 2026" y "1:18 p. m."; el front escribe
+ *     "a la 1" / "a las 2" y se salta el conector si no hay hora.
+ *   Archivos: js/ofertas.js, version.js.
+ * ------------------------------------------------------------
  * ANCHO DE PANTALLA Y AVIÓN DE ESCRITURA (10/10/2026).
  *   · Monitores grandes: el inicio, Ofertas, Mis documentos y Recursos
  *     suman columnas del mismo tamaño (3 a 1560 px, 4 a 2040, 5 a 2520);
@@ -167,4 +174,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.10.01";
+var APP_VERSION = "2026.10.10.02";

@@ -104,13 +104,26 @@
      cuándo es la entrevista, cómo se conecta y qué salió. Las
      observaciones internas y la nota del evaluador no llegan hasta
      acá: el backend no las manda.                                 */
+  /* 10/10/2026 — la hora llega legible ("1:18 p. m."): "a la 1",
+     "a las 2". Sin hora no se escribe el conector. */
+  function aLas(h) {
+    h = String(h == null ? '' : h).trim();
+    if (!h) return '';
+    return (/^1:/.test(h) ? ' a la ' : ' a las ') + h;
+  }
+  function aLasB(h) {
+    h = String(h == null ? '' : h).trim();
+    if (!h) return '';
+    return (/^1:/.test(h) ? ' a la ' : ' a las ') + '<b>' + esc(h) + '</b>';
+  }
+
   function bloqueEntrevista(m) {
     if (!m || !m.entrevista) return '';
     var e = m.entrevista;
     return '' +
       '<div class="ofe-ent">' +
       '  <div class="ofe-ent-t">🗓️ Tu entrevista</div>' +
-      '  <div class="ofe-ent-f"><b>' + esc(e.fecha) + '</b> a las <b>' + esc(e.hora) + '</b></div>' +
+      '  <div class="ofe-ent-f"><b>' + esc(e.fecha) + '</b>' + aLasB(e.hora) + '</div>' +
       (e.link ? '  <a class="btn btn-ghost btn-block" href="' + esc(e.link) +
                 '" target="_blank" rel="noopener">Abrir el enlace de la entrevista</a>' : '') +
       (e.instrucciones ? '  <p class="ofe-ent-i">' + esc(e.instrucciones) + '</p>' : '') +
@@ -176,7 +189,7 @@
         '  </div>' +
         '  <p class="muted center" style="margin:10px 0 0">' +
              (o.mia.asignadaPorSep ? 'Asignada por SEP' : 'Seleccionada') + ' el ' + esc(o.mia.fecha) +
-        '   a las ' + esc(o.mia.hora) + ' · Sponsor ' + esc(o.mia.sponsor) + '</p>' +
+             esc(aLas(o.mia.hora)) + ' · Sponsor ' + esc(o.mia.sponsor) + '</p>' +
              bloqueEntrevista(o.mia) + bloqueResultado(o.mia) +
         '  <button class="btn btn-ghost btn-block" id="ofe-abrir" style="margin-top:10px">Ver mi oferta</button>' +
         '</div>';
@@ -370,7 +383,7 @@
         '  </div>' +
         '  <p class="muted">Sponsor <b>' + esc(d.mia.sponsor) + '</b> · ' +
              (d.mia.asignadaPorSep ? 'asignada por SEP' : 'seleccionada') + ' el ' +
-             esc(d.mia.fecha) + ' a las ' + esc(d.mia.hora) + '.</p>' +
+             esc(d.mia.fecha) + esc(aLas(d.mia.hora)) + '.</p>' +
              bloqueEntrevista(d.mia) + bloqueResultado(d.mia) +
         '</div>';
     }
