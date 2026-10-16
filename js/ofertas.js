@@ -130,8 +130,28 @@
       '</div>';
   }
 
+  /* FASE 6.5 — participante de una subagencia: Contratado / Rechazado
+     (lo registra su agencia) y, si fue rechazado, espera a que SEP libere
+     la oferta antes de poder escoger otra. */
+  function esAg() { return typeof EST !== 'undefined' && EST && !!EST.agencia; }
+  function quienLibera() { return esAg() ? 'tu agencia' : 'tu asesor de Procesos'; }
+  function bloqueResultadoAg(m) {
+    var f = m.resultadoFecha ? ' <span class="muted">(' + esc(m.resultadoFecha) + ')</span>' : '';
+    if (m.resultado === 'APROBADA') {
+      return '<div class="ofe-res ofe-res--ok">✅ <b>¡Fuiste contratado(a)!</b> ' +
+             'Tu agencia registró el resultado. Tu Sponsor es <b>' + esc(m.sponsor) + '</b>.' + f + '</div>';
+    }
+    if (m.esperaLiberacion) {
+      return '<div class="ofe-res ofe-res--no">❌ <b>No fuiste contratado(a) en esta oferta.</b> ' +
+             'SEP debe liberarla para que puedas escoger otra; te avisará tu agencia.' + f + '</div>';
+    }
+    return '<div class="ofe-res ofe-res--no">❌ <b>No fuiste contratado(a) en esta oferta.</b> ' +
+           'SEP ya la liberó: puedes escoger otra.' + f + '</div>';
+  }
+
   function bloqueResultado(m) {
     if (!m || !m.resultado) return '';
+    if (m.agencia) return bloqueResultadoAg(m);
     if (m.resultado === 'APROBADA') {
       return '<div class="ofe-res ofe-res--ok">✅ <b>Tu entrevista fue aprobada.</b> ' +
              'Tu oferta queda confirmada y tu Sponsor es <b>' + esc(m.sponsor) + '</b>.' +
@@ -212,7 +232,7 @@
       return '' +
         '<div class="card">' +
         '  <h2><span class="em">💼</span> Ofertas de empleo</h2>' +
-        '  <div class="ofe-res ofe-res--ok">🔓 <b>Procesos liberó tu selección.</b> ' +
+        '  <div class="ofe-res ofe-res--ok">🔓 <b>' + (esAg() ? 'SEP' : 'Procesos') + ' liberó tu selección.</b> ' +
         '  Ya puedes volver a escoger la oferta que prefieras.</div>' +
         '  <button class="btn btn-accent btn-block" id="ofe-abrir" style="margin-top:10px">Escoger otra oferta</button>' +
         '</div>';
@@ -399,8 +419,10 @@
           '<div class="card ofe-lock-card"><div class="ofe-lock">' +
           '  <div class="ofe-lock-ic">🔒</div>' +
           '  <p>Ya escogiste tu oferta, así que el catálogo queda cerrado. ' +
-          '     Si necesitas cambiarla, habla con tu asesor de Procesos: ' +
-          '     solo él puede liberarla para que vuelvas a escoger.</p>' +
+          (esAg()
+            ? '     Si necesitas cambiarla, habla con tu agencia: solo SEP puede liberarla para que vuelvas a escoger.</p>'
+            : '     Si necesitas cambiarla, habla con tu asesor de Procesos: ' +
+              '     solo él puede liberarla para que vuelvas a escoger.</p>') +
           '</div></div>';
       }
       cont.innerHTML = html;
@@ -417,7 +439,7 @@
       html += '<div class="card">' + bloqueResultado(d.ultima) + '</div>';
     } else if (!d.mia && d.ultima && d.ultima.liberada) {
       /* 07/10/2026 — Procesos liberó su oferta elegida. */
-      html += '<div class="card"><div class="ofe-res ofe-res--ok">🔓 <b>Procesos liberó tu selección.</b> ' +
+      html += '<div class="card"><div class="ofe-res ofe-res--ok">🔓 <b>' + (esAg() ? 'SEP' : 'Procesos') + ' liberó tu selección.</b> ' +
         'Ya puedes volver a escoger la oferta que prefieras.' +
         (d.ultima.liberadaFecha ? ' <span class="muted">(' + esc(d.ultima.liberadaFecha) + ')</span>' : '') +
         '</div></div>';
@@ -598,7 +620,7 @@
           ? 'Tienes una oferta pendiente de confirmar: <b>'
           : (mia.ofertaId === o.id ? 'Esta es tu oferta seleccionada: <b>' : 'Ya tienes una oferta seleccionada: <b>')) +
         esc(mia.posicion) + '</b> en ' + esc(mia.empleador) + '.' +
-        (mia.pendienteConfirmacion ? '' : ' Si necesitas cambiarla, habla con tu asesor de Procesos.') +
+        (mia.pendienteConfirmacion ? '' : ' Si necesitas cambiarla, habla con ' + quienLibera() + '.') +
         '</p></div></div>';
     } else if (!o.elegible || !puerta.ok) {
       var todos = (o.motivos || []).concat(puerta.ok ? [] : puerta.motivos);

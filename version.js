@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * FASE 6.5 · OFERTAS Y DOCUMENTOS DEL PARTICIPANTE DE SUBAGENCIA (16/10/2026 · 2).
+ *   · Con el formulario aprobado escoge su oferta (sin pago ni curso; solo
+ *     los sponsors habilitados para subagencias). Ve su entrevista y el
+ *     resultado Contratado / Rechazado; si fue rechazado, espera a que SEP
+ *     libere la oferta. Mis documentos con la lista de su agencia.
+ *   Archivos: js/ofertas.js, version.js.
+ * ------------------------------------------------------------
  * FASE 6.4 · PORTAL DEL PARTICIPANTE DE SUBAGENCIA (16/10/2026).
  *   · Quien viene de una agencia entra con su clave y ve el portal
  *     reducido: el logo y el nombre de SU agencia arriba, Acciones
@@ -195,4 +202,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.16.01";
+var APP_VERSION = "2026.10.16.02";
