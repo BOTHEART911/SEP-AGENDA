@@ -197,7 +197,9 @@
     }
 
     html += bloqueAccesos(p, e);
-    html += bloqueContacto(p, e);
+    /* FASE 6.4 — el participante de una subagencia no ve "Tu programa y
+       contacto" ni "Hablar con mi Asesor": su contacto es su agencia. */
+    if (!p.agencia) html += bloqueContacto(p, e);
     html += pie();
     return html;
   }
@@ -270,6 +272,10 @@
       case 'seguimiento': return abrirSeguimiento(e);
       case 'miContrato':  return abrirMiContrato(e);
       case 'recursos':    return abrirRecursos(e);       /* Ajustes Fase 5 */
+      /* FASE 6.4 — los 2 únicos videos de SEP para el participante de
+         una subagencia: la prueba de inglés y cómo elegir oferta. */
+      case 'videoPrueba': return abrirVideo(e, 'prueba');
+      case 'videoOferta': return abrirVideo(e, 'oferta');
     }
   }
 
@@ -465,6 +471,61 @@
     caja.appendChild(f);
   }
 
+  /* ============================================================
+     VIDEOS DE SEP PARA LA SUBAGENCIA (Fase 6.4 · 16/10/2026)
+     ============================================================
+     El enlace llega en el tablero (EST.portal.videos), en el mismo
+     viaje del login: abrir esta vista no pide nada al servidor. Si es
+     de YouTube se monta el reproductor al tocarlo (como Recursos); si
+     no, un botón que lo abre. */
+  function ytId(url) {
+    var m = String(url || '').match(/(?:youtu\.be\/|[?&]v=|embed\/|shorts\/|live\/)([\w-]{11})/);
+    return m ? m[1] : '';
+  }
+  function abrirVideo(e, tipo) {
+    var p = portal(e);
+    var v = (p && p.videos) || {};
+    var pr = (p && p.prueba) || {};
+    var url = tipo === 'oferta' ? v.oferta : v.test;
+    var titulo = tipo === 'oferta' ? 'Cómo elegir tu oferta' : 'Tu prueba de inglés';
+    var texto = tipo === 'oferta'
+      ? 'Tu formulario fue aprobado. Mira este video antes de escoger tu oferta de empleo.'
+      : (pr.puntaje
+          ? 'Tu resultado fue ' + pr.puntaje + ' y necesitas ' + Number(pr.minimo || 4.5).toFixed(1) +
+            ' o más para continuar. Puedes volver a presentarla: sigue los pasos del video.'
+          : 'Sigue los pasos del video para presentar tu prueba de inglés. Cuando SEP registre tu resultado, lo verás aquí.');
+    if (!url) {
+      return Swal.fire({ icon: 'info', title: titulo, text: texto + ' Tu agencia te indicará cómo hacerlo.', confirmButtonText: 'Entendido' });
+    }
+    var id = ytId(url);
+    q('#pt-sub').textContent = titulo;
+    q('#pt-title').textContent = titulo;
+    q('#pt-cont').innerHTML = '' +
+      '<article class="rc-card">' +
+      (id
+        ? '<div class="rc-video" data-yt="' + esc(id) + '">' +
+          '  <button class="rc-play" type="button" aria-label="Ver el video: ' + esc(titulo) + '">' +
+          '    <img src="https://i.ytimg.com/vi/' + esc(id) + '/hqdefault.jpg" alt="" loading="lazy" referrerpolicy="no-referrer">' +
+          '    <span class="rc-play-ic" aria-hidden="true">▶</span>' +
+          '  </button>' +
+          '</div>'
+        : '') +
+      '  <div class="rc-cuerpo">' +
+      '    <h3>' + esc(titulo) + '</h3>' +
+      '    <p>' + esc(texto) + '</p>' +
+      (id ? '' : '    <a class="btn btn-accent btn-block" href="' + esc(url) + '" target="_blank" rel="noopener">▶ Ver el video</a>') +
+      '  </div>' +
+      '</article>';
+    var caja = q('#pt-cont .rc-video');
+    if (caja) {
+      caja.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
+      var b = caja.querySelector('.rc-play');
+      if (b) b.addEventListener('click', function () { montarVideoRecurso(caja); });
+    }
+    S.vista = 'video';
+    showView('portal');
+  }
+
   /* Salida de la vista genérica del portal. */
   var salir = document.getElementById('pt-salir');
   if (salir) salir.addEventListener('click', function () { showView('home'); });
@@ -473,6 +534,6 @@
     render: render, bind: bind, ir: ir,
     /* Puertas para las pruebas automatizadas. */
     _pend: bloquePendientes, _acc: bloqueAccesos, _pago: tarjetaPago, _estado: S,
-    _miContrato: abrirMiContrato, _recursos: abrirRecursos
+    _miContrato: abrirMiContrato, _recursos: abrirRecursos, _video: abrirVideo, _ytId: ytId
   };
 })();

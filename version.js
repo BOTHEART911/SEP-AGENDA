@@ -9,6 +9,20 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * FASE 6.4 · PORTAL DEL PARTICIPANTE DE SUBAGENCIA (16/10/2026).
+ *   · Quien viene de una agencia entra con su clave y ve el portal
+ *     reducido: el logo y el nombre de SU agencia arriba, Acciones
+ *     pendientes, Forms y Accesos rápidos (Mi perfil, Mis documentos y
+ *     Escoger ofertas). Sin Visa, pagos, seguimiento, contrato, recursos
+ *     ni el bloque de contacto de SEP.
+ *   · La prueba de inglés aparece en Acciones pendientes con el video de
+ *     SEP; con la nota de 4.5 o más se abre el formulario; aprobado el
+ *     formulario, el video de cómo elegir oferta.
+ *   · El login sigue con la marca SEP y al salir no queda el logo de la
+ *     agencia. Los participantes de SEP no cambian.
+ *   Archivos: index.html, app.js, js/portal.js, js/formulario.js,
+ *   version.js.
+ * ------------------------------------------------------------
  * RUEDAS iOS EN VEZ DE FECHAS DEL NAVEGADOR (10/10/2026 · 3).
  *   · Las citas del CAS y del Consulado (módulo Visa) se eligen en la
  *     rueda de la app, que ahora suma hora:minuto con a. m./p. m. Lo que
@@ -181,4 +195,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.10.03";
+var APP_VERSION = "2026.10.16.01";

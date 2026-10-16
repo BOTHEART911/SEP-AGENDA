@@ -386,7 +386,7 @@ var FORMU = (function () {
       '  <h2><span class="em">📝</span> FORMS</h2>' +
       (listo
         ? '  <div class="ctr-ok"><div class="ctr-ok-ic">🎉</div>' +
-          '    <p>You completed your form! Our team is reviewing it.' +
+          '    <p>You completed your form! ' + ((e && e.agencia) ? 'Your agency is reviewing it.' : 'Our team is reviewing it.') +
           ((f.docsPendientes && f.docsPendientes.length)
             ? ' You still have to upload: <b>' + f.docsPendientes.map(esc).join('</b>, <b>') + '</b>.'
             : '') + '</p></div>'
@@ -1094,7 +1094,9 @@ var FORMU = (function () {
     return '' +
       '<div class="card fm-pre">' +
       '  <h2><span class="em">🆔</span> Your details</h2>' +
-      '  <p class="muted">These details come from your contract. If something is wrong, contact your advisor.</p>' +
+      '  <p class="muted">' + ((typeof EST !== 'undefined' && EST && EST.agencia)
+          ? 'These details come from your registration. If something is wrong, contact your agency.'
+          : 'These details come from your contract. If something is wrong, contact your advisor.') + '</p>' +
       /* LOTE 17/08 — envoltura para poder repartirlos en dos columnas
          en PC sin arrastrar el título ni el aviso de la tarjeta. */
       '  <div class="fm-pre-g">' +

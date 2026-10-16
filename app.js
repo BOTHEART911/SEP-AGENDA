@@ -213,15 +213,45 @@ $('#in-clave')?.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') $('#bt
 $('#btn-logout')?.addEventListener('click', ()=>{
   Swal.fire({ icon:'question', title:'¿Cerrar sesión?', showCancelButton:true,
     confirmButtonText:'Sí, salir', cancelButtonText:'Cancelar' }).then(r=>{
-    if (r.isConfirmed){ borrarSesion_(); EST = null; $('#in-clave').value=''; showView('login'); }
+    if (r.isConfirmed){
+      borrarSesion_(); EST = null; $('#in-clave').value='';
+      /* 6.4 — sin rastro de la agencia para quien entre después. */
+      document.body.classList.remove('es-agencia');
+      const hl = $('#home-logo'); if (hl){ hl.onerror = null; hl.src = LOGO_DEFAULT; hl.alt = 'SEP'; }
+      const hs = $('#home-view-sub'); if (hs) hs.textContent = 'SEP Colombia Group';
+      showView('login');
+    }
   });
 });
 
 /* ============================================================
  * HOME — render según estado
  * ============================================================ */
-function renderHome_(){
+/* FASE 6.4 (16/10/2026) — participante de una SUBAGENCIA: arriba va el
+   logo de SU agencia (no el de SEP) y su nombre. El login sigue con la
+   marca SEP: el logo de la agencia no se queda pegado al cerrar sesión. */
+const LOGO_AGENCIA_DEF = 'https://botheart911.github.io/SEP-GROUP/img/agencias.svg';
+function marcaInicio_(){
+  const logo = $('#home-logo'), sub = $('#home-view-sub');
+  const ag = EST && EST.agencia;
+  document.body.classList.toggle('es-agencia', !!ag);
+  if (ag){
+    if (logo){
+      logo.onerror = function(){ this.onerror = null; this.src = LOGO_AGENCIA_DEF; };
+      logo.src = ag.logoUrl || LOGO_AGENCIA_DEF;
+      logo.alt = ag.nombre || 'Agencia';
+    }
+    if (sub) sub.textContent = ag.nombre || '';
+    return;
+  }
+  if (logo){ logo.onerror = null; logo.alt = 'SEP'; }
+  if (sub) sub.textContent = 'SEP Colombia Group';
   if (EST.logo){ $('#home-logo').src = EST.logo; $('#login-logo').src = EST.logo; }
+  else if (logo) logo.src = LOGO_DEFAULT;
+}
+
+function renderHome_(){
+  marcaInicio_();
   const cont = $('#home-content');
 
   /* FASE 4 · ENTREGA 6 (04/09/2026) — el inicio lo arma js/portal.js a
