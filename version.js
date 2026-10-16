@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * FASE 6.8 · CIERRE DE LA FASE 6 DE SUBAGENCIAS (16/10/2026 · 4).
+ *   · Mis documentos del participante de agencia: lo revisa su agencia y sus
+ *     archivos son privados (se abren con su cuenta de Google).
+ *   · Ofertas: los textos del participante de agencia hablan de su agencia,
+ *     no de "tu asesor(a) de procesos".
+ *   Archivos: js/documentos.js, js/ofertas.js, version.js.
+ * ------------------------------------------------------------
  * FASE 6.6 · TU VUELO Y PAUSA DEL PARTICIPANTE DE SUBAGENCIA (16/10/2026 · 3).
  *   · Con la visa aprobada aparece "Carga tu vuelo" en Acciones pendientes y
  *     la tarjeta "Tu vuelo" (sin pasos de visa ni Pre-Arrival): imagen o PDF
@@ -209,4 +216,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.16.03";
+var APP_VERSION = "2026.10.16.04";

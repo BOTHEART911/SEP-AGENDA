@@ -806,7 +806,8 @@
           quitar();
           Swal.fire({
             icon: 'success', title: 'Oferta rechazada',
-            html: 'El cupo quedó liberado. Tu asesor(a) de procesos te propondrá otra oferta.',
+            html: esAg() ? 'El cupo quedó liberado. Habla con tu agencia para escoger otra oferta.'
+                        : 'El cupo quedó liberado. Tu asesor(a) de procesos te propondrá otra oferta.',
             confirmButtonText: 'Entendido'
           }).then(function () { abrir(); });
         }, function (e) {

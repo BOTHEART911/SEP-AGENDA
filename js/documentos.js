@@ -76,12 +76,24 @@
       ? (pendientes + porCorregir) + ' por cargar'
       : 'Todos al día';
 
+    /* FASE 6.8 — participante de subagencia: lo revisa su agencia y sus
+       archivos son privados (se abren con su cuenta de Google). */
+    var esAg = typeof EST !== 'undefined' && EST && !!EST.agencia;
+    var acc = (typeof EST !== 'undefined' && EST && EST.accesoArchivos) || {};
     var aviso = '' +
       '<div class="doc-aviso">' +
       '  📄 Los documentos se cargan en <b>PDF</b> (el itinerario de vuelo también en imagen) y pesan máximo <b>' + S.maxMb + ' MB</b>. ' +
-      '  Mientras SEP no lo apruebe puedes reemplazarlo; una vez <b>aprobado</b> queda bloqueado. ' +
-      '  Si lo rechazamos, te decimos el motivo y lo vuelves a cargar.' +
-      '</div>';
+      (esAg
+        ? '  Mientras tu agencia no lo apruebe puedes reemplazarlo; una vez <b>aprobado</b> queda bloqueado. ' +
+          '  Si lo rechaza, verás el motivo aquí y lo vuelves a cargar.'
+        : '  Mientras SEP no lo apruebe puedes reemplazarlo; una vez <b>aprobado</b> queda bloqueado. ' +
+          '  Si lo rechazamos, te decimos el motivo y lo vuelves a cargar.') +
+      '</div>' +
+      (esAg
+        ? '<div class="doc-aviso doc-aviso--priv">🔒 Tus documentos son privados: se abren con tu cuenta de Google' +
+          (acc.correo ? ' <b>' + esc(acc.correo) + '</b>' : '') +
+          '. Si acabas de cargar uno, puede tardar unos minutos en abrir.</div>'
+        : '');
 
     q('#doc-cont').innerHTML = aviso + lista.map(item).join('');
     cablear();
