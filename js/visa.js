@@ -48,6 +48,8 @@
   function qq(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
   function esc(s) { return (typeof escapeHtml_ === 'function') ? escapeHtml_(s) : String(s == null ? '' : s); }
   function visa() { return (typeof EST !== 'undefined' && EST && EST.portal && EST.portal.visa) || null; }
+  /* FASE 6.6 — participante de subagencia (sin correos ni Pre-Arrival). */
+  function esAgencia() { var v = visa(); return !!(v && v.agencia); }
 
   /* 'yyyy-mm-dd HH:mm' → 'mar 3 nov 2026 · 8:00 a. m.' */
   function fechaBonita(s) {
@@ -196,7 +198,11 @@
       html = '<div class="card"><p class="muted center" style="padding:10px 0">El módulo Visa todavía no está disponible.</p></div>';
     } else {
       html = cabecera(v);
-      if (!v.habilitado) {
+      if (v.agencia) {
+        /* FASE 6.6 — participante de subagencia: con la visa aprobada solo
+           ve la tarjeta "Tu vuelo" (sin pasos de visa ni Pre-Arrival). */
+        if (v.pre) html += bloqueVuelo(v.pre);
+      } else if (!v.habilitado) {
         html += '<div class="card vs-bloq"><div class="vs-bloq-ic">🔒</div><p>' + esc(v.mensaje) + '</p></div>';
       } else {
         if (v.espera) html += '<div class="vs-espera">⏳ ' + esc(v.espera) + '</div>';
@@ -252,7 +258,7 @@
       html += '<div class="vs-rifa is-si">🎟️ Cargaste tu vuelo dentro de las 72 horas: <b>participas en la rifa SEP</b>.</div>';
     }
     if (est === 'RECHAZADO' && vu.nota) {
-      html += '<div class="vs-alerta"><b>Por qué no lo aprobamos:</b> ' + esc(vu.nota) + '</div>';
+      html += '<div class="vs-alerta"><b>' + (pre.agencia ? 'Por qué tu agencia no lo aprobó:' : 'Por qué no lo aprobamos:') + '</b> ' + esc(vu.nota) + '</div>';
     }
     var acc = [];
     if (vu.url) acc.push('<button class="btn btn-ghost" type="button" id="vs-vuelo-ver">👁 Ver mi itinerario</button>');
@@ -261,7 +267,9 @@
                (est === 'RECHAZADO' ? '↩️ Volver a cargar' : (vu.url ? '♻️ Reemplazar' : '⬆️ Cargar mi vuelo')) + '</button>');
     }
     if (acc.length) html += '<div class="vs-vuelo-acc">' + acc.join('') + '</div>';
-    if (vu.url && est !== 'APROBADO') html += '<p class="vs-nota">Mientras SEP no lo apruebe lo puedes reemplazar. Te avisamos por correo.</p>';
+    if (vu.url && est !== 'APROBADO') html += '<p class="vs-nota">' + (pre.agencia
+      ? 'Mientras tu agencia no lo apruebe lo puedes reemplazar.'
+      : 'Mientras SEP no lo apruebe lo puedes reemplazar. Te avisamos por correo.') + '</p>';
     html += '<input type="file" id="vs-vuelo-file" accept="' + esc(vu.acepta || 'application/pdf,.pdf,image/jpeg,image/png,.jpg,.jpeg,.png') + '" hidden>';
     return html + '</div>';
   }
@@ -294,7 +302,7 @@
     var mal = vueloArchivoOk(file);
     if (mal) { Swal.fire({ icon: 'warning', title: 'Revisa el archivo', text: mal }); return; }
     var c = await Swal.fire({ icon: 'question', title: '¿Cargar este itinerario?',
-      html: '<b>' + esc(file.name) + '</b><br><span style="color:#44546b">Queda en revisión. Lo puedes reemplazar mientras SEP no lo apruebe.</span>',
+      html: '<b>' + esc(file.name) + '</b><br><span style="color:#44546b">Queda en revisión. Lo puedes reemplazar mientras ' + (esAgencia() ? 'tu agencia' : 'SEP') + ' no lo apruebe.</span>',
       showCancelButton: true, confirmButtonText: 'Sí, cargar', cancelButtonText: 'Volver' });
     if (!c.isConfirmed || S.ocupado) return;
     S.ocupado = true;
@@ -313,7 +321,7 @@
       }), { escritura: true });
       if (typeof medAnotarFront_ === 'function') medAnotarFront_('subirDocumento', performance.now() - t0, 0, 'vuelo');
       if (cred_().clave !== claveDespacho) { if (carga) carga.cerrar(); return; }
-      var fin = carga ? carga.listo({ titulo: '¡Listo! Tu vuelo quedó cargado', sub: 'Queda en revisión. Te avisamos por correo 🎉', paso: 'Cargado correctamente ✅' }) : Promise.resolve();
+      var fin = carga ? carga.listo({ titulo: '¡Listo! Tu vuelo quedó cargado', sub: esAgencia() ? 'Queda en revisión de tu agencia ✈️' : 'Queda en revisión. Te avisamos por correo 🎉', paso: 'Cargado correctamente ✅' }) : Promise.resolve();
       await fin;
       if (res && res.portal) aplicarPortal(res.portal);
       else refrescarEstudiante();
@@ -516,8 +524,8 @@
     var act = v && v.pasos ? v.pasos.find(function (p) { return p.estado === 'activo'; }) : null;
     S.abierto = (v && v.pre) ? 0 : (act ? act.n : 0);     // con visa aprobada, lo que sigue es el Pre-Arrival
     S.preVideo = false;
-    q('#pt-sub').textContent = 'Tu proceso de visa';
-    q('#pt-title').textContent = 'Visa';
+    q('#pt-sub').textContent = (v && v.agencia) ? 'Tu visa fue aprobada' : 'Tu proceso de visa';
+    q('#pt-title').textContent = (v && v.agencia) ? 'Tu vuelo' : 'Visa';
     render();
     showView('portal');
     if (v && v.pre) {

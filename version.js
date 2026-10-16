@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * FASE 6.6 · TU VUELO Y PAUSA DEL PARTICIPANTE DE SUBAGENCIA (16/10/2026 · 3).
+ *   · Con la visa aprobada aparece "Carga tu vuelo" en Acciones pendientes y
+ *     la tarjeta "Tu vuelo" (sin pasos de visa ni Pre-Arrival): imagen o PDF
+ *     del itinerario, estado y motivo si su agencia lo rechaza. Sin correos.
+ *   · Si su agencia lo marca Retirado, el portal queda en pausa.
+ *   Archivos: js/visa.js, js/portal.js, version.js.
+ * ------------------------------------------------------------
  * FASE 6.5 · OFERTAS Y DOCUMENTOS DEL PARTICIPANTE DE SUBAGENCIA (16/10/2026 · 2).
  *   · Con el formulario aprobado escoge su oferta (sin pago ni curso; solo
  *     los sponsors habilitados para subagencias). Ve su entrevista y el
@@ -202,4 +209,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.16.02";
+var APP_VERSION = "2026.10.16.03";

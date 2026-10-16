@@ -175,8 +175,9 @@
       html += '' +
         '<div class="card">' +
         '  <h2><span class="em">⏸️</span> Proceso pausado</h2>' +
-        '  <p class="muted center" style="padding:6px 0">Tu proceso está pausado. Comunícate con tu asesor(a) ' +
-        '     para retomarlo. Puedes seguir consultando tus pagos, documentos y seguimiento.</p>' +
+        '  <p class="muted center" style="padding:6px 0">' + (p.agencia
+          ? 'Tu proceso está pausado. Comunícate con tu agencia para retomarlo. Puedes seguir consultando tu perfil y tus documentos.'
+          : 'Tu proceso está pausado. Comunícate con tu asesor(a) para retomarlo. Puedes seguir consultando tus pagos, documentos y seguimiento.') + '</p>' +
         '</div>';
     } else {
       html += bloquePendientes(p);
