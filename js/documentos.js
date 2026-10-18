@@ -90,9 +90,7 @@
           '  Si lo rechazamos, te decimos el motivo y lo vuelves a cargar.') +
       '</div>' +
       (esAg
-        ? '<div class="doc-aviso doc-aviso--priv">🔒 Tus documentos son privados: se abren con tu cuenta de Google' +
-          (acc.correo ? ' <b>' + esc(acc.correo) + '</b>' : '') +
-          '. Si acabas de cargar uno, puede tardar unos minutos en abrir.</div>'
+        ? '<div class="doc-aviso doc-aviso--priv">🔒 Tus documentos son privados: los ves y los descargas aquí mismo con <b>👁 Ver</b>.</div>'
         : '');
 
     q('#doc-cont').innerHTML = aviso + lista.map(item).join('');
@@ -104,7 +102,10 @@
 
     if (d.tieneArchivo) {
       acciones.push('<button class="btn btn-ghost" data-ver="' + esc(d.clave) + '">👁 Ver</button>');
-      acciones.push('<a class="btn btn-ghost" data-privado="1" href="' + esc(bajar(d.url)) + '" target="_blank" rel="noopener">⬇️ Descargar</a>');
+      /* 6.10 — subagencia: el visor de la app ya trae Descargar. */
+      if (!(typeof EST !== 'undefined' && EST && EST.agencia)) {
+        acciones.push('<a class="btn btn-ghost" data-privado="1" href="' + esc(bajar(d.url)) + '" target="_blank" rel="noopener">⬇️ Descargar</a>');
+      }
     }
     if (d.puedeSubir) {
       acciones.push('<button class="btn btn-accent" data-subir="' + esc(d.clave) + '">' +

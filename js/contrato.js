@@ -405,9 +405,42 @@ var CONTRATO = (function () {
     });
   }
 
+  /* FASE 6.10 (17/10/2026) — participante de SUBAGENCIA: sus archivos son
+     privados y el servidor se los entrega al visor de la app
+     (js/archivo-visor.js): se ven y se descargan sin iniciar sesión en
+     Google. Es una lectura: sin rid; un reintento solo ante falla de red
+     o el 404 de echo. Devuelve true si se encargó él. */
+  function archivoEstPedir_(clave, url) {
+    var una = function () {
+      return fetch(API_BASE + '?action=agArchivoEst', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ clave: clave, f: url }) }).then(function (r) {
+        if (r.status === 404) { var e = new Error('echo404'); e.red = true; throw e; }
+        return r.json().catch(function () { var e2 = new Error('RESPUESTA_NO_JSON'); e2.red = true; throw e2; });
+      });
+    };
+    var esRed = function (e) { return !!(e && (e.red || e.name === 'TypeError')); };
+    return una().catch(function (e) {
+      if (!esRed(e)) throw e;
+      return new Promise(function (ok) { setTimeout(ok, 800); }).then(una);
+    }).catch(function (e) {
+      if (esRed(e)) throw new Error('No se pudo conectar con el servidor. Revisa tu conexión e intenta de nuevo.');
+      throw e;
+    }).then(function (j) {
+      if (!j.ok) throw new Error(/Acción no reconocida/.test(String(j.error)) ? 'Muy pronto podrás ver tus documentos aquí. Intenta más tarde.' : (j.error || 'No se pudo abrir el archivo.'));
+      return j.data;
+    });
+  }
+  function archivoAgencia(url, titulo) {
+    if (!url || !(typeof EST !== 'undefined' && EST && EST.agencia) || !window.SEPArchivo) return false;
+    var clave = (typeof cred_ === 'function') ? cred_().clave : '';
+    SEPArchivo.abrir(titulo || 'Documento', function () { return archivoEstPedir_(clave, url); });
+    return true;
+  }
+
   /* Visor dentro de la app: no abre pestaña. */
   function verArchivo(url, titulo) {
     if (!url) return;
+    if (archivoAgencia(url, titulo)) return;   // 6.10 — subagencia: privado, por el servidor
     if (typeof archivoSinGoogle_ === 'function' && archivoSinGoogle_()) return avisoArchivoSinGoogle_();   // 07/10/2026
     var m = String(url).match(/[-\w]{25,}/);
     q('#ctr-visor-title').textContent = titulo || 'Archivo';
@@ -924,6 +957,7 @@ var CONTRATO = (function () {
        usan también "Mis documentos" y "Mi contrato". Se expone en vez de
        escribir un segundo visor. */
     visor: verArchivo,
+    archivoAgencia: archivoAgencia,   // 6.10
     visorPrivado: visorPrivado_
   };
 })();

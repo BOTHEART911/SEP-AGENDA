@@ -1075,6 +1075,8 @@ var FORMU = (function () {
   function verDoc_(k) {
     var url = txt(S.vals[k]);
     if (!url) return;
+    /* 6.10 — participante de subagencia: privado, lo entrega el servidor. */
+    if (typeof CONTRATO !== 'undefined' && CONTRATO.archivoAgencia && CONTRATO.archivoAgencia(url, ((campoDe_(k) || {}).l) || 'File')) return;
     if (typeof archivoSinGoogle_ === 'function' && archivoSinGoogle_()) return avisoArchivoSinGoogle_();   // 07/10/2026
     var c = campoDe_(k);
     var m = String(url).match(/[-\w]{25,}/);

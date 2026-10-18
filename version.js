@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * FASE 6.10 · AJUSTES DE JAVIER (17/10/2026 · 1).
+ *   · Participante de subagencia: sus documentos, hoja de vida, vuelo y
+ *     archivos del formulario se ven y se descargan dentro de la app
+ *     (privados; los entrega el servidor, sin iniciar sesión en Google).
+ *   Archivos: js/archivo-visor.js (nuevo, pieza única con SEP-GROUP),
+ *   js/contrato.js, js/formulario.js, js/documentos.js, index.html, version.js.
+ * ------------------------------------------------------------
  * FASE 6.8 · CIERRE DE LA FASE 6 DE SUBAGENCIAS (16/10/2026 · 4).
  *   · Mis documentos del participante de agencia: lo revisa su agencia y sus
  *     archivos son privados (se abren con su cuenta de Google).
@@ -216,4 +223,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.16.04";
+var APP_VERSION = "2026.10.17.01";
