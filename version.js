@@ -219,8 +219,15 @@
  * las partes en ficha, firmas en recuadros y precios por plan en
  * tarjetas (js/contrato.js, css/contrato.css, css/tema-oscuro.css).
  * ------------------------------------------------------------
+ * AJUSTE 22/10/2026 (Javier) — Visa · Paso 1: botón "Paga y agenda tu
+ *   cita consular aquí" (sistema oficial, pestaña nueva) y registro del
+ *   correo y la contraseña del Sistema de Visa (ruta visaSistema; la
+ *   contraseña nunca vuelve al portal). Además, al cambiar de versión la
+ *   app trae sus .js/.css frescos antes de recargar: lo publicado se ve
+ *   en la primera apertura. Archivos: js/visa.js, css/visa.css, app.js.
+ * ------------------------------------------------------------
  * Sube este número en cada despliegue del frontend. La app lo lee
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.17.01";
+var APP_VERSION = "2026.10.22.01";

@@ -537,9 +537,32 @@ async function checkVersion(){
       }
       try { sessionStorage.setItem('sepRecargaVer', v); } catch(_){}
       try{ const keys = await caches.keys(); await Promise.all(keys.map(k => caches.delete(k))); }catch(_){}
+      /* 22/10/2026 — la recarga normal del navegador revalida solo la
+         página: los .js/.css propios podían seguir saliendo de la caché
+         HTTP (~10 min en GitHub Pages) y la versión nueva se veía en la
+         2.ª apertura. Antes de recargar se piden a la red con
+         cache:'reload' (eso REEMPLAZA la copia de la caché HTTP). */
+      await refrescarEstaticos_();
       location.reload();
     }
   } finally { __verInFlight = false; }
+}
+
+/* Los archivos propios de la app (página, scripts y estilos del mismo
+   origen) se traen frescos de la red. Máximo 4 s: si la red tarda, se
+   recarga igual (nunca deja la app esperando). */
+async function refrescarEstaticos_(){
+  try{
+    const urls = new Set([location.href.split('#')[0]]);
+    document.querySelectorAll('script[src], link[rel="stylesheet"][href]').forEach(el => {
+      try{
+        const u = new URL(el.getAttribute('src') || el.getAttribute('href'), location.href);
+        if (u.origin === location.origin) urls.add(u.href);
+      }catch(_){}
+    });
+    const pedir = Promise.all([...urls].map(u => fetch(u, { cache:'reload', credentials:'same-origin' }).catch(() => null)));
+    await Promise.race([pedir, new Promise(r => setTimeout(r, 4000))]);
+  }catch(_){}
 }
 
 /* ============================================================

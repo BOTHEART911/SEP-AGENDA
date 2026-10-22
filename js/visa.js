@@ -31,6 +31,15 @@
  *     motivo si SEP lo rechaza y la rifa. La subida devuelve el
  *     tablero completo (un solo viaje) y se parcha en memoria.
  *
+ * AJUSTE 22/10/2026 (Javier) · Paso 1 "Pago y agendamiento"
+ *   · Debajo del N° DS-160: botón "Paga y agenda tu cita consular aquí"
+ *     (abre el sistema oficial en una pestaña nueva).
+ *   · Debajo del botón: Correo de Sistema Visa + contraseña de su cuenta.
+ *     Va por la ruta visaSistema; la contraseña NUNCA vuelve al portal
+ *     (solo "guardada"). Se puede corregir mientras la carpeta no esté
+ *     entregada. El bloque solo aparece si el backend manda v.sv, así
+ *     front y backend se publican en cualquier orden.
+ *
  * ESCRITURA
  *   Botón ocupado + escudo desde el primer toque, id de petición (rid)
  *   y un solo reintento seguro (apiPost con {escritura:true}). La
@@ -41,8 +50,10 @@
 (function () {
   'use strict';
 
-  var S = { abierto: 0, ocupado: false, preVideo: false };
+  var S = { abierto: 0, ocupado: false, preVideo: false, svVer: false };
   var VUELO_MAX_MB = 5;
+  /* AJUSTE 22/10/2026 — sistema oficial para pagar y agendar la cita. */
+  var VISA_SISTEMA_URL = 'https://ais.usvisa-info.com/es-co/niv';
 
   function q(s, c) { return (c || document).querySelector(s); }
   function qq(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
@@ -142,7 +153,8 @@
       var c = v.cita || {};
       var hecho = p.estado === 'hecho';
       var html = '<div class="vs-ds"><span class="vs-k">Número DS-160 para solicitar tu cita</span>' +
-                 '<b class="vs-num">' + esc(v.ds160Int || '—') + '</b></div>';
+                 '<b class="vs-num">' + esc(v.ds160Int || '—') + '</b></div>' +
+                 botonPagar() + bloqueSistema(v);
       if (hecho && !v.citaEditable) {
         return html + '<div class="vs-dato"><span>CAS</span><b>' + esc(fechaBonita(c.cas)) + '</b></div>' +
                       '<div class="vs-dato"><span>Consulado</span><b>' + esc(fechaBonita(c.consul)) + '</b></div>' +
@@ -170,6 +182,42 @@
     }
     return '<label class="vs-check"><input type="checkbox" id="vs-conf-' + p.n + '"> <span>' + esc(p.conf) + '</span></label>' +
            '<button class="btn btn-accent btn-block vs-go" data-paso="' + p.n + '" disabled>Continuar</button>';
+  }
+
+  /* ---------- AJUSTE 22/10/2026 · Sistema de Visa ---------- */
+  function botonPagar() {
+    return '<a class="btn btn-accent btn-block vs-pagar" href="' + VISA_SISTEMA_URL + '" target="_blank" rel="noopener noreferrer">' +
+           '<span aria-hidden="true">💳</span> Paga y agenda tu cita consular aquí <span class="vs-ext" aria-hidden="true">↗</span></a>' +
+           '<p class="vs-nota vs-pagar-n">Se abre el sistema oficial de citas de visa de EE. UU. en una pestaña nueva.</p>';
+  }
+  function bloqueSistema(v) {
+    var sv = v.sv;
+    if (!sv) return '';                                   // backend aún sin la ruta: no se ofrece
+    var html = '<div class="vs-sv" id="vs-sv">' +
+      '<div class="vs-sv-h"><span class="vs-sv-ic" aria-hidden="true">🔐</span>' +
+      '<div><div class="vs-sv-t">Tu cuenta del Sistema de Visa</div>' +
+      '<div class="vs-sv-s">Registra el correo y la contraseña con los que creaste tu cuenta. ' +
+      'Solo tu asesor(a) de Procesos puede verlos.</div></div></div>';
+    if (!sv.editable) {
+      return html +
+        '<div class="vs-dato"><span>Correo de Sistema Visa</span><b>' + esc(sv.correo || '—') + '</b></div>' +
+        '<div class="vs-dato"><span>Contraseña</span><b>' + (sv.hay ? '🔒 Guardada' : '—') + '</b></div>' +
+        '<p class="vs-nota">Tu carpeta ya fue entregada. Si necesitas cambiar estos datos, avísale a tu asesor(a).</p></div>';
+    }
+    return html +
+      '<label class="vs-lab">Correo de Sistema Visa' +
+      '  <input type="email" class="vs-in" id="vs-sv-correo" maxlength="120" autocomplete="off" autocapitalize="off" spellcheck="false"' +
+      '   inputmode="email" placeholder="tucorreo@ejemplo.com" value="' + esc(sv.correo || '') + '"></label>' +
+      '<label class="vs-lab">Contraseña de tu Sistema de Visa' +
+      '  <span class="vs-pass">' +
+      '    <input type="' + (S.svVer ? 'text' : 'password') + '" class="vs-in" id="vs-sv-clave" maxlength="100" autocomplete="new-password"' +
+      '     autocapitalize="off" spellcheck="false" placeholder="' + (sv.hay ? '•••••• (sin cambios)' : 'Escribe tu contraseña') + '">' +
+      '    <button type="button" class="vs-ojo" id="vs-sv-ojo" aria-label="' + (S.svVer ? 'Ocultar contraseña' : 'Ver contraseña') + '"' +
+      '     aria-pressed="' + (S.svVer ? 'true' : 'false') + '">' + (S.svVer ? '🙈' : '👁') + '</button>' +
+      '  </span></label>' +
+      (sv.hay ? '<p class="vs-sv-ok">✅ Ya tienes una contraseña guardada' + (sv.correo ? ' para <b>' + esc(sv.correo) + '</b>' : '') + '. Escribe una nueva solo si la cambiaste.</p>' : '') +
+      '<button type="button" class="btn btn-ghost btn-block vs-sv-go" id="vs-sv-go">' +
+      (sv.hay ? '💾 Actualizar mis datos del Sistema de Visa' : '💾 Guardar mis datos del Sistema de Visa') + '</button></div>';
   }
 
   function tarjetaPaso(p, v) {
@@ -402,6 +450,18 @@
         if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); abrirCita(el); }
       });
     });
+    /* AJUSTE 22/10/2026 — Sistema de Visa */
+    var ojo = q('#vs-sv-ojo', cont);
+    if (ojo) ojo.addEventListener('click', function () {
+      var inp = q('#vs-sv-clave'); if (!inp) return;
+      S.svVer = !S.svVer;
+      inp.type = S.svVer ? 'text' : 'password';
+      ojo.textContent = S.svVer ? '🙈' : '👁';
+      ojo.setAttribute('aria-pressed', S.svVer ? 'true' : 'false');
+      ojo.setAttribute('aria-label', S.svVer ? 'Ocultar contraseña' : 'Ver contraseña');
+    });
+    var svGo = q('#vs-sv-go', cont);
+    if (svGo) svGo.addEventListener('click', function () { enviarSistema(svGo); });
     qq('.vs-go', cont).forEach(function (btn) {
       btn.addEventListener('click', function () { enviar(Number(btn.getAttribute('data-paso')), btn); });
     });
@@ -499,6 +559,68 @@
     }
   }
 
+  /* AJUSTE 22/10/2026 — lo que el participante escribió en el Paso 1 y aún
+     no guardó (fechas de la cita) sobrevive al repintado. */
+  function tomarBorrador() {
+    var b = {};
+    ['vs-cas', 'vs-consul'].forEach(function (id) { var el = q('#' + id); if (el) b[id] = el.value; });
+    return b;
+  }
+  function ponerBorrador(b) {
+    Object.keys(b || {}).forEach(function (id) {
+      var el = q('#' + id), vis = q('[data-rueda-de="' + id + '"]');
+      if (!el || !b[id]) return;
+      el.value = b[id];
+      if (vis) vis.value = fechaBonita(b[id].replace('T', ' '));
+    });
+  }
+
+  function datosSistema() {
+    var sv = (visa() || {}).sv || {};
+    var correo = String((q('#vs-sv-correo') || {}).value || '').trim().toLowerCase().replace(/\s+/g, '');
+    var clave = String((q('#vs-sv-clave') || {}).value || '').trim();
+    if (!correo) return { error: 'Escribe el correo con el que creaste tu cuenta del Sistema de Visa.' };
+    if (!/^[^@]+@[^@]+\.[a-z0-9-]{2,}$/.test(correo) || correo.length > 120) return { error: 'Revisa el correo: no parece válido.' };
+    if (!clave && !sv.hay) return { error: 'Escribe la contraseña de tu cuenta del Sistema de Visa.' };
+    if (clave.length > 100) return { error: 'La contraseña es demasiado larga.' };
+    return { svCorreo: correo, svClave: clave };
+  }
+
+  async function enviarSistema(btn) {
+    if (S.ocupado) return;                          // escudo: nada de doble envío
+    var datos = datosSistema();
+    if (datos.error) { Swal.fire({ icon: 'warning', title: 'Falta algo', text: datos.error }); return; }
+    S.ocupado = true;
+    var txt = btn.innerHTML;
+    btn.disabled = true; btn.classList.add('ocupado'); btn.innerHTML = 'Guardando…';
+    qq('.vs-go').forEach(function (b) { b.disabled = true; });
+    var claveDespacho = cred_().clave;              // la sesión se toma al despachar
+    var t0 = performance.now();
+    var ok = false;
+    try {
+      var res = await apiPost('visaSistema', Object.assign(cred_(), datos), { escritura: true });
+      if (typeof medAnotarFront_ === 'function') medAnotarFront_('visaSistema', performance.now() - t0, 0, '');
+      if (cred_().clave !== claveDespacho) return;  // sesión vieja: no pisa la nueva
+      var borrador = tomarBorrador();
+      S.svVer = false;
+      parchar(res && res.visa);
+      render();
+      ponerBorrador(borrador);
+      ok = true;
+      toast_('success', res && res.yaEstaba ? 'Ya estaba guardado' : 'Datos del Sistema de Visa guardados');
+    } catch (e) {
+      error_(e && e.message);
+    } finally {
+      datos.svClave = '';                           // la contraseña no se queda en memoria
+      S.ocupado = false;
+      if (!ok) { btn.disabled = false; btn.classList.remove('ocupado'); btn.innerHTML = txt; }
+      qq('.vs-go').forEach(function (b) {
+        var chk = q('#vs-conf-' + b.getAttribute('data-paso'));
+        b.disabled = chk ? !chk.checked : false;
+      });
+    }
+  }
+
   /* Parche en memoria: el módulo, su tarjeta y la acción pendiente. */
   function parchar(nueva) {
     if (!nueva || typeof EST === 'undefined' || !EST || !EST.portal) return;
@@ -538,6 +660,7 @@
     abrir: abrir,
     /* Puertas para las pruebas automatizadas. */
     _estado: S, _render: render, _parchar: parchar, _datos: datosPaso, _fecha: fechaBonita,
-    _vueloOk: vueloArchivoOk, _subirVuelo: subirVuelo
+    _vueloOk: vueloArchivoOk, _subirVuelo: subirVuelo,
+    _datosSistema: datosSistema, _enviarSistema: enviarSistema
   };
 })();
