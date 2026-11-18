@@ -377,3 +377,4 @@ html[data-tema="oscuro"] .fm-btn-reab { --reab:var(--warn); }
      el contrato). */
   .fm-campos + .ctr-nav { max-width:560px; margin-left:auto; margin-right:auto; }
 }
+.fm-ay a { color: var(--accent, #2563eb); font-weight: 700; text-decoration: underline; overflow-wrap: anywhere; }

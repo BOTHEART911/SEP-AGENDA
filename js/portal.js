@@ -444,6 +444,13 @@
             '  <div class="rc-cuerpo">' +
             '    <h3>' + esc(r.t) + '</h3>' +
             (r.d ? '    <p>' + esc(r.d) + '</p>' : '') +
+            /* 17/11/2026 (Javier, punto 11) — PDF del recurso: se ve y se
+               descarga directo de Drive (enlace de solo lectura). */
+            (/^[\w-]{20,}$/.test(String(r.p || ''))
+              ? '    <div class="rc-pdf"><span class="rc-pdf-n">📄 ' + esc(r.pn || 'Documento.pdf') + '</span>' +
+                '      <button class="btn btn-ghost rc-pdf-ver" type="button" data-pdf="' + esc(r.p) + '" data-pn="' + esc(r.pn || r.t) + '">👁 Ver PDF</button>' +
+                '      <a class="btn btn-ghost" href="https://drive.google.com/uc?export=download&id=' + encodeURIComponent(r.p) + '" target="_blank" rel="noopener">⬇️ Descargar</a></div>'
+              : '') +
             '  </div>' +
             '</article>';
         }).join('') + '</div>';
@@ -453,6 +460,13 @@
       caja.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
       var b = caja.querySelector('.rc-play');
       if (b) b.addEventListener('click', function () { montarVideoRecurso(caja); });
+    });
+    qq('#pt-cont .rc-pdf-ver').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var url = 'https://drive.google.com/file/d/' + encodeURIComponent(b.getAttribute('data-pdf')) + '/preview';
+        if (typeof CONTRATO !== 'undefined' && CONTRATO.visor) CONTRATO.visor(url, b.getAttribute('data-pn') || 'Documento');
+        else window.open(url, '_blank');
+      });
     });
     S.vista = 'recursos';
     showView('portal');

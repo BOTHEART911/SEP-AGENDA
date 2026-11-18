@@ -657,10 +657,18 @@ var FORMU = (function () {
     return hay;
   }
 
+  function ayudaConEnlace_(t) {
+    return esc(t).replace(/https:\/\/(?:youtu\.be\/[\w-]{11}|www\.youtube\.com\/watch\?v=[\w-]{11})/g, function (u) {
+      return '<a href="' + u + '" target="_blank" rel="noopener">▶ ' + u + '</a>';
+    });
+  }
+
   function campoHtml_(c, editable) {
     var id = 'fm-' + c.k;
     var v = S.vals[c.k];
-    var ay = c.ay ? '<small class="fm-ay">' + esc(c.ay) + '</small>' : '';
+    /* 17/11/2026 (Javier, punto 9) — si la ayuda trae un enlace de YouTube
+       (el video de ejemplo), se vuelve enlace que abre en otra pestaña. */
+    var ay = c.ay ? '<small class="fm-ay">' + ayudaConEnlace_(c.ay) + '</small>' : '';
     var req = c.req ? '<span class="fm-req">*</span>' : '';
     var dis = editable ? '' : ' disabled';
 

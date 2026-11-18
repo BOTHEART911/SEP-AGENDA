@@ -9,6 +9,12 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * AJUSTES OPERATIVOS DE JAVIER (17/11/2026 · 2) — RECURSOS Y FORMULARIO.
+ *   · Recursos: si SEP cargó un PDF, «Ver PDF» y «Descargar».
+ *   · Formulario: el video de ejemplo de la presentación es un enlace.
+ *   Archivos: js/portal.js, js/formulario.js, styles.css,
+ *   css/formulario.css, version.js.
+ * ------------------------------------------------------------
  * AJUSTES OPERATIVOS DE JAVIER (17/11/2026 · 1) — VISA, PASO 1.
  *   · Sobre las fechas CAS/Consulado: «IMPORTANTE: Tu cita consular debe
  *     estar programada para el 5 de marzo de 2027 o una fecha posterior…».
@@ -237,4 +243,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.11.17.01";
+var APP_VERSION = "2026.11.17.02";
