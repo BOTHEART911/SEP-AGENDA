@@ -148,6 +148,20 @@
            '<p class="vs-priv">🔒 ' + esc(v.aviso || '') + '</p>';
   }
 
+  /* 17/11/2026 (Javier, punto 1) — fecha mínima de la cita consular de la
+     temporada. Si el servidor algún día la manda (v.citaMin), manda esa. */
+  var VS_CITA_MIN = '2027-03-05';
+  function citaMin(v) { return (v && /^\d{4}-\d{2}-\d{2}$/.test(v.citaMin || '')) ? v.citaMin : VS_CITA_MIN; }
+  function fechaLarga(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); if (!m) return iso || '';
+    var mes = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][+m[2] - 1];
+    return (+m[3]) + ' de ' + mes + ' de ' + m[1];
+  }
+  function avisoCitaMin(v) {
+    return '<div class="vs-alerta vs-alerta--cita">⚠️ <b>IMPORTANTE:</b> Tu cita consular debe estar programada para el ' +
+      esc(fechaLarga(citaMin(v))) + ' o una fecha posterior. No agendes citas anteriores a esta fecha.</div>';
+  }
+
   function formPaso(p, v) {
     if (p.pide === 'cita') {
       var c = v.cita || {};
@@ -160,7 +174,7 @@
                       '<div class="vs-dato"><span>Consulado</span><b>' + esc(fechaBonita(c.consul)) + '</b></div>' +
                       '<p class="vs-nota">Tu carpeta ya fue entregada. Si cambió tu cita, avísale a tu asesor(a).</p>';
       }
-      return html +
+      return html + avisoCitaMin(v) +
         '<label class="vs-lab">Fecha y hora de tu cita en el CAS' + campoCita('vs-cas', c.cas, 'Cita en el CAS') + '</label>' +
         '<label class="vs-lab">Fecha y hora de tu cita en el Consulado' + campoCita('vs-consul', c.consul, 'Cita en el Consulado') + '</label>' +
         '<button class="btn btn-accent btn-block vs-go" data-paso="1">' + (hecho ? '💾 Actualizar mis fechas' : '🗓️ Registrar mi cita') + '</button>';
@@ -509,6 +523,17 @@
     var datos = datosPaso(n);
     if (datos.error) { Swal.fire({ icon: 'warning', title: 'Falta algo', text: datos.error }); return; }
 
+    if (n === 1) {
+      /* 17/11/2026 — una cita antes de la fecha mínima se advierte y se
+         deja guardar si la persona confirma (puede que ya la tenga). */
+      var min = citaMin(visa() || {});
+      if (String(datos.cas).slice(0, 10) < min || String(datos.consul).slice(0, 10) < min) {
+        var ok1 = await Swal.fire({ icon: 'warning', title: 'Tu cita es antes del ' + fechaLarga(min),
+          html: 'La cita consular debe ser el <b>' + esc(fechaLarga(min)) + '</b> o después. Si ya la tienes agendada así, guárdala y avísale a tu asesor(a) de Procesos.',
+          showCancelButton: true, confirmButtonText: 'Guardar de todas formas', cancelButtonText: 'Cambiar la fecha' });
+        if (!ok1.isConfirmed) return;
+      }
+    }
     if (n === 2) {
       var ok = await Swal.fire({ icon: 'question', title: '¿Tu número es ' + datos.ds160r + '?',
         text: 'Después de guardarlo solo tu asesor(a) de Procesos lo puede corregir.',

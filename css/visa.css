@@ -112,3 +112,5 @@
 .vs-vuelo-acc { display:flex; flex-wrap:wrap; gap:8px; }
 .vs-vuelo-acc .btn { flex:1 1 160px; }
 .vs-vuelo-acc .btn.ocupado { opacity:.7; pointer-events:none; }
+/* 17/11/2026 (Javier, punto 1) — aviso de la fecha mínima de la cita. */
+.vs-alerta--cita { margin: 4px 0 12px; line-height: 1.45; }

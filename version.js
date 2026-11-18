@@ -9,6 +9,13 @@
  * y de recargarse sola en los dispositivos. Con este archivo de vuelta,
  * todo eso funciona otra vez.
  * ------------------------------------------------------------
+ * AJUSTES OPERATIVOS DE JAVIER (17/11/2026 · 1) — VISA, PASO 1.
+ *   · Sobre las fechas CAS/Consulado: «IMPORTANTE: Tu cita consular debe
+ *     estar programada para el 5 de marzo de 2027 o una fecha posterior…».
+ *     Si escribe una fecha anterior se le advierte y puede guardarla si ya
+ *     la tiene agendada (no se bloquea).
+ *   Archivos: js/visa.js, css/visa.css, version.js.
+ * ------------------------------------------------------------
  * FASE 6.10 · AJUSTES DE JAVIER (17/10/2026 · 1).
  *   · Participante de subagencia: sus documentos, hoja de vida, vuelo y
  *     archivos del formulario se ven y se descargan dentro de la app
@@ -230,4 +237,4 @@
  * sin caché: si cambia, limpia caches y recarga automáticamente en
  * todos los dispositivos. También alimenta el texto "Versión X".
  * ============================================================ */
-var APP_VERSION = "2026.10.22.01";
+var APP_VERSION = "2026.11.17.01";
